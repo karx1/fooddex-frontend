@@ -57,6 +57,10 @@ export const ConstellationItem = z.object({
 	constellation: Int(),
 });
 
+export const FoodRecognitionRequest = z.object({
+	image: Str()
+})
+
 // Database table types for Kysely
 export interface Database {
 	foods: {

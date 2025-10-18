@@ -3,14 +3,14 @@ import { z } from "zod";
 import { createDB } from "../../database";
 import { type AppContext, User, UserCreate } from "../../types";
 
-export class UserCreateEndpoint extends OpenAPIRoute {
+export class RecognizeFoodEndpoint extends OpenAPIRoute {
     schema = {
         tags: ["ImgRecognition"],
         summary: "Recognize foods from an image",
         request: {
             body: {
                 content: {
-                    "application/json": {
+                    "application/multipart": {
                         schema: UserCreate,
                     },
                 },
