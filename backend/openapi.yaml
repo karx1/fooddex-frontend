@@ -1,0 +1,995 @@
+openapi: 3.0.0
+info:
+  title: Fooddex API
+  description: Complete CRUD API for the Fooddex application
+  version: 1.0.0
+servers:
+  - url: http://localhost:8787
+    description: Local development server
+  - url: https://your-worker.workers.dev
+    description: Production server
+
+tags:
+  - name: Foods
+    description: Food management endpoints
+  - name: Captures
+    description: Capture management endpoints
+  - name: Users
+    description: User management endpoints
+  - name: Favorites
+    description: Favorite management endpoints
+  - name: Constellations
+    description: Constellation management endpoints
+  - name: Constellation Items
+    description: Constellation item management endpoints
+
+components:
+  schemas:
+    Food:
+      type: object
+      required:
+        - id
+        - rarity
+        - origin
+        - foodname
+        - photo_url
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the food
+        rarity:
+          type: integer
+          description: Rarity level of the food
+        origin:
+          type: string
+          description: Origin location of the food
+        foodname:
+          type: string
+          description: Name of the food
+        photo_url:
+          type: string
+          description: URL to the food's photo
+    
+    FoodCreate:
+      type: object
+      required:
+        - rarity
+        - origin
+        - foodname
+        - photo_url
+      properties:
+        rarity:
+          type: integer
+        origin:
+          type: string
+        foodname:
+          type: string
+        photo_url:
+          type: string
+    
+    FoodUpdate:
+      type: object
+      properties:
+        rarity:
+          type: integer
+        origin:
+          type: string
+        foodname:
+          type: string
+        photo_url:
+          type: string
+    
+    Capture:
+      type: object
+      required:
+        - id
+        - food
+        - date
+        - user
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the capture
+        food:
+          type: integer
+          description: ID of the captured food
+        date:
+          type: string
+          format: date-time
+          description: Date and time of capture
+        user:
+          type: integer
+          description: ID of the user who made the capture
+    
+    CaptureCreate:
+      type: object
+      required:
+        - food
+        - date
+        - user
+      properties:
+        food:
+          type: integer
+        date:
+          type: string
+          format: date-time
+        user:
+          type: integer
+    
+    User:
+      type: object
+      required:
+        - id
+        - username
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the user
+        username:
+          type: string
+          description: Username
+    
+    UserCreate:
+      type: object
+      required:
+        - username
+      properties:
+        username:
+          type: string
+    
+    Favorite:
+      type: object
+      required:
+        - user
+        - food
+      properties:
+        user:
+          type: integer
+          description: ID of the user
+        food:
+          type: integer
+          description: ID of the favorited food
+    
+    Constellation:
+      type: object
+      required:
+        - id
+        - user
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the constellation
+        user:
+          type: integer
+          description: ID of the user who owns the constellation
+    
+    ConstellationCreate:
+      type: object
+      required:
+        - user
+      properties:
+        user:
+          type: integer
+    
+    ConstellationItem:
+      type: object
+      required:
+        - food
+        - constellation
+      properties:
+        food:
+          type: integer
+          description: ID of the food in the constellation
+        constellation:
+          type: integer
+          description: ID of the constellation
+    
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+    
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error message
+
+paths:
+  /api/foods:
+    get:
+      tags:
+        - Foods
+      summary: List all foods
+      responses:
+        '200':
+          description: List of all foods
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      foods:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Food'
+    post:
+      tags:
+        - Foods
+      summary: Create a new food
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoodCreate'
+      responses:
+        '200':
+          description: Created food
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      food:
+                        $ref: '#/components/schemas/Food'
+  
+  /api/foods/{id}:
+    get:
+      tags:
+        - Foods
+      summary: Get a food by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Food details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      food:
+                        $ref: '#/components/schemas/Food'
+        '404':
+          description: Food not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - Foods
+      summary: Update a food
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoodUpdate'
+      responses:
+        '200':
+          description: Updated food
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      food:
+                        $ref: '#/components/schemas/Food'
+        '404':
+          description: Food not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - Foods
+      summary: Delete a food
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Food deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          description: Food not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  
+  /api/captures:
+    get:
+      tags:
+        - Captures
+      summary: List all captures
+      responses:
+        '200':
+          description: List of all captures
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      captures:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Capture'
+    post:
+      tags:
+        - Captures
+      summary: Create a new capture
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaptureCreate'
+      responses:
+        '200':
+          description: Created capture
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      capture:
+                        $ref: '#/components/schemas/Capture'
+  
+  /api/captures/{id}:
+    get:
+      tags:
+        - Captures
+      summary: Get a capture by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Capture details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      capture:
+                        $ref: '#/components/schemas/Capture'
+        '404':
+          description: Capture not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - Captures
+      summary: Update a capture
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                food:
+                  type: integer
+                date:
+                  type: string
+                  format: date-time
+                user:
+                  type: integer
+      responses:
+        '200':
+          description: Updated capture
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      capture:
+                        $ref: '#/components/schemas/Capture'
+        '404':
+          description: Capture not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - Captures
+      summary: Delete a capture
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Capture deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          description: Capture not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  
+  /api/users:
+    get:
+      tags:
+        - Users
+      summary: List all users
+      responses:
+        '200':
+          description: List of all users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      users:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/User'
+    post:
+      tags:
+        - Users
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '200':
+          description: Created user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/User'
+  
+  /api/users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get a user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - Users
+      summary: Update a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+      responses:
+        '200':
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - Users
+      summary: Delete a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  
+  /api/favorites:
+    get:
+      tags:
+        - Favorites
+      summary: List all favorites
+      responses:
+        '200':
+          description: List of all favorites
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      favorites:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Favorite'
+    post:
+      tags:
+        - Favorites
+      summary: Create a new favorite
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Favorite'
+      responses:
+        '200':
+          description: Created favorite
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      favorite:
+                        $ref: '#/components/schemas/Favorite'
+  
+  /api/favorites/user/{userId}:
+    get:
+      tags:
+        - Favorites
+      summary: Get all favorites for a user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User's favorites
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      favorites:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Favorite'
+  
+  /api/favorites/user/{userId}/food/{foodId}:
+    delete:
+      tags:
+        - Favorites
+      summary: Delete a favorite
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: foodId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Favorite deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          description: Favorite not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  
+  /api/constellations:
+    get:
+      tags:
+        - Constellations
+      summary: List all constellations
+      responses:
+        '200':
+          description: List of all constellations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      constellations:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Constellation'
+    post:
+      tags:
+        - Constellations
+      summary: Create a new constellation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConstellationCreate'
+      responses:
+        '200':
+          description: Created constellation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      constellation:
+                        $ref: '#/components/schemas/Constellation'
+  
+  /api/constellations/{id}:
+    get:
+      tags:
+        - Constellations
+      summary: Get a constellation by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Constellation details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      constellation:
+                        $ref: '#/components/schemas/Constellation'
+        '404':
+          description: Constellation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - Constellations
+      summary: Update a constellation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: integer
+      responses:
+        '200':
+          description: Updated constellation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      constellation:
+                        $ref: '#/components/schemas/Constellation'
+        '404':
+          description: Constellation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - Constellations
+      summary: Delete a constellation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Constellation deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          description: Constellation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  
+  /api/constellation-items:
+    get:
+      tags:
+        - Constellation Items
+      summary: List all constellation items
+      responses:
+        '200':
+          description: List of all constellation items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      constellationItems:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ConstellationItem'
+    post:
+      tags:
+        - Constellation Items
+      summary: Create a new constellation item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConstellationItem'
+      responses:
+        '200':
+          description: Created constellation item
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      constellationItem:
+                        $ref: '#/components/schemas/ConstellationItem'
+  
+  /api/constellation-items/constellation/{constellationId}:
+    get:
+      tags:
+        - Constellation Items
+      summary: Get all items in a constellation
+      parameters:
+        - name: constellationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Constellation items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      constellationItems:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ConstellationItem'
+  
+  /api/constellation-items/constellation/{constellationId}/food/{foodId}:
+    delete:
+      tags:
+        - Constellation Items
+      summary: Delete a constellation item
+      parameters:
+        - name: constellationId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: foodId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Constellation item deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          description: Constellation item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
