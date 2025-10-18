@@ -1,30 +1,30 @@
 import { Bool, OpenAPIRoute } from "chanfana";
 import { z } from "zod";
 import { createDB } from "../../database";
-import { type AppContext, Food, FoodCreate } from "../../types";
+import { type AppContext, User, UserCreate } from "../../types";
 
-export class FoodCreateEndpoint extends OpenAPIRoute {
+export class UserCreateEndpoint extends OpenAPIRoute {
     schema = {
-        tags: ["Foods"],
-        summary: "Create a new food",
+        tags: ["ImgRecognition"],
+        summary: "Recognize foods from an image",
         request: {
             body: {
                 content: {
                     "application/json": {
-                        schema: FoodCreate,
+                        schema: UserCreate,
                     },
                 },
             },
         },
         responses: {
             "200": {
-                description: "Returns the created food",
+                description: "Returns the created user",
                 content: {
                     "application/json": {
                         schema: z.object({
                             success: Bool(),
                             result: z.object({
-                                food: Food,
+                                user: User,
                             }),
                         }),
                     },
@@ -38,21 +38,18 @@ export class FoodCreateEndpoint extends OpenAPIRoute {
         const db = createDB(c.env.foodex_db);
 
         const result = await db
-            .insertInto("foods")
+            .insertInto("users")
             .values(data.body)
             .returning([
                 "id",
-                "rarity",
-                "origin",
-                "foodname",
-                "description",
+                "username",
             ])
             .executeTakeFirstOrThrow();
 
         return {
             success: true,
             result: {
-                food: result,
+                user: result,
             },
         };
     }

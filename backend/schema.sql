@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS foods (
   rarity INTEGER NOT NULL,
   origin VARCHAR NOT NULL,
   foodname VARCHAR NOT NULL,
-  photo_url VARCHAR NOT NULL,
   description TEXT NOT NULL
 );
 

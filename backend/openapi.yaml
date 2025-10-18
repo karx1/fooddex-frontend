@@ -32,7 +32,6 @@ components:
         - rarity
         - origin
         - foodname
-        - photo_url
       properties:
         id:
           type: integer
@@ -46,9 +45,10 @@ components:
         foodname:
           type: string
           description: Name of the food
-        photo_url:
+
+        description:
           type: string
-          description: URL to the food's photo
+          description: Description of the food
     
     FoodCreate:
       type: object
@@ -56,15 +56,12 @@ components:
         - rarity
         - origin
         - foodname
-        - photo_url
       properties:
         rarity:
           type: integer
         origin:
           type: string
         foodname:
-          type: string
-        photo_url:
           type: string
     
     FoodUpdate:
@@ -76,8 +73,7 @@ components:
           type: string
         foodname:
           type: string
-        photo_url:
-          type: string
+
     
     Capture:
       type: object

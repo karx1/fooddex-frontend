@@ -10,7 +10,6 @@ export const Food = z.object({
 	rarity: Int(),
 	origin: Str(),
 	foodname: Str(),
-	photo_url: Str(),
 	description: Str(),
 });
 
@@ -65,7 +64,6 @@ export interface Database {
 		rarity: number;
 		origin: string;
 		foodname: string;
-		photo_url: string;
 		description: string;
 	};
 	captures: {

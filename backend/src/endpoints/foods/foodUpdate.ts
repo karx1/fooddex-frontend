@@ -60,7 +60,6 @@ export class FoodUpdateEndpoint extends OpenAPIRoute {
                 "rarity",
                 "origin",
                 "foodname",
-                "photo_url",
             ])
             .executeTakeFirst();
 
