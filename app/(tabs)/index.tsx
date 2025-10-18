@@ -19,7 +19,7 @@ export default function TabOneScreen() {
       >
         <Paragraph fontSize="$5">Add</Paragraph>
 
-        <Paragraph fontSize="$5" px="$2" py="$1" color="$blue10" bg="$blue5">
+        <Paragraph fontSize="$5" px="$2" py="$1" bg="$accentColor">
           tamagui.config.ts
         </Paragraph>
 
