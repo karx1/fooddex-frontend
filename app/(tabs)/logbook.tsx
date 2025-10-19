@@ -128,7 +128,7 @@ export default function LogbookScreen() {
   // Render the final list of logbook entries
   return (
     <YStack flex={1} bg="$background" pt="$1">
-      <H4 pb="$2">My Captures</H4>
+      <H4 pb="$2" pl="$4">My Captures</H4>
       <FlatList
         data={logbookEntries}
         keyExtractor={(item) => item.id}
