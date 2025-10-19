@@ -10,7 +10,7 @@ json = {
 }
 
 response = requests.post(
-    "http://localhost:8787/api/recognizeFood",
+    "https://backend.brandonwees.workers.dev/api/recognizeFood",
     json=json
 )
 

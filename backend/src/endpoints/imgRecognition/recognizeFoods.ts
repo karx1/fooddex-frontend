@@ -3,6 +3,7 @@ import { z } from "zod";
 import { type AppContext, FoodRecognitionData, FoodRecognitionRequest } from "../../types";
 
 import { GoogleGenAI, createPartFromBase64, createPartFromText } from "@google/genai";
+import { createDB } from "../../database";
 
 
 export class RecognizeFoodEndpoint extends OpenAPIRoute {
@@ -37,9 +38,17 @@ export class RecognizeFoodEndpoint extends OpenAPIRoute {
         console
         const data = await this.getValidatedData<typeof this.schema>();
 
-        const queries = ['pizza', 'soup'];
+
+        const db = createDB(c.env.foodex_db);
+
+        const result = await db.selectFrom("foods").selectAll().execute();
+
 
         const ai = new GoogleGenAI({ apiKey: c.env.GEMINI_KEY });
+        let foodSt = "";
+        result.forEach((item, i) => {
+            foodSt += `${i}:${item.foodname},`
+        })
 
         const prompt = `
             Return square bounding boxes around objects identified as 'food'
@@ -52,18 +61,24 @@ export class RecognizeFoodEndpoint extends OpenAPIRoute {
             Never return masks or code fencing. Limit to 25 objects/foods. Include as many
             objects as you can identify on the table.
 
-            Here is a list of food labels: ${queries.join(',')}.
+            Here is a list of food labels.:
+            
+            ${result}
+            
             The label for each box returned should be an identifying name for the food detected.
             Prioritize labels drawn from the list of food labels, but be at liberty
             to create new labels to describe the food if absolutely necessary
             should none in the list match. In the case of a new label, make the relabel value in the JSON
             1. Otherwise, set relabel to 0.
 
+            We also want to store which index in the list of food labels our label resides in.
+
             
             The format should be as follows: [{"box_2d": [ymin, xmin, ymax, xmax],
-            "label": <label for the object>, "relabel": <relabel value 0 or 1>}]
+            "label": <label for the object>, "rel_id": <index in list>, 
+            "relabel": <relabel value 0 or 1>}]
             normalized to 0-1000. The values in
-            box_2d and point must only be integers
+            box_2d, rel_id, and point must only be integers
         `.trim();
 
 
@@ -79,13 +94,9 @@ export class RecognizeFoodEndpoint extends OpenAPIRoute {
             }
         });
 
-        console.log(response.text)
-
-
         return {
             success: true,
             result: JSON.parse(response.text),
         };
-
     }
 }
