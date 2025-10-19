@@ -95,6 +95,10 @@ export interface ApiResponse<T> {
     result: T;
 }
 
+export type ImageApiResponse<T> = ApiResponse<T> & {
+    image_id: string;
+}
+
 export interface ApiErrorResponse {
     success: boolean;
     error: string;
@@ -582,12 +586,12 @@ export function useDeleteConstellationItem(
 
 
 export function useRecognizeFood(
-    request: FoodRecognitionRequest | null, options?: UseMutationOptions<ApiResponse<FoodRecognitionData>, Error>
+    request: FoodRecognitionRequest | null, options?: UseMutationOptions<ImageApiResponse<FoodRecognitionData>, Error>
 ) {
     return useQuery({
         queryKey: ['recognizeFood', request],
         queryFn: () =>
-            fetchApi<ApiResponse<FoodRecognitionData>>('/api/recognizeFood', {
+            fetchApi<ImageApiResponse<FoodRecognitionData>>('/api/recognizeFood', {
                 method: 'POST',
                 body: JSON.stringify(request),
             }),
