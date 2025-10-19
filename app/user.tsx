@@ -1,9 +1,10 @@
 import { Star } from '@tamagui/lucide-icons';
 import { useState } from 'react'
-import { Image, SafeAreaView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Image, SafeAreaView, StyleSheet, View } from 'react-native';
 import { Button, H6, H3,H4, Paragraph, Separator, useTheme, XGroup, XStack, YStack, Avatar } from 'tamagui';
-import { useUser, CURRENT_USER_ID } from 'hooks/useApi';
+import { useUser, CURRENT_USER_ID, useConstellations } from 'hooks/useApi';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import type { Constellation } from 'hooks/useApi';
 
 const styles = StyleSheet.create({
     imageContainer: {
@@ -58,12 +59,15 @@ function DiscoveriesView (){
     )
 }
 
-function ConstellationView (){
+function ConstellationView (props){
+    const constellations: Constellation[] = props.constellations
     return (
         <View flex={1} alignItems="left" justify="center" bg="$background">
             <H4>Constellations</H4>
             <XStack>
-
+                {constellations.map(item => (
+                    <Paragraph key={item.id}>{item.id}</Paragraph>
+                ))}
             </XStack>
         </View>
 
@@ -80,6 +84,7 @@ export default function UserScreen() {
     const addFriendClick = () => {
 
     }
+    const {data: constellationData, isLoading } = useConstellations();
     // State to track the currently selected view
     const [selectedView, setSelectedView] = useState<"constellations" | "discoveries">("constellations");
     return (
@@ -125,55 +130,15 @@ export default function UserScreen() {
                     <Button onPress={() => setSelectedView("discoveries")}>Discoveries</Button>
                 </XGroup.Item>
             </XGroup>
-            {/* Conditionally render the selected view */}
             {selectedView === "constellations" ? (
-                <ConstellationView />
+                isLoading ? (
+                    <ActivityIndicator size="large" color={theme.color.get()} />
+                ) : (
+                    <ConstellationView constellations={constellationData?.result.constellations} />
+                )
             ) : (
                 <DiscoveriesView />
-            )}
-
-
-            {/* <XStack
-                items="center"
-                justify="center"
-                flexWrap="wrap"
-                gap="$1.5"
-                position="absolute"
-                b="$8"
-            >
-                <Paragraph fontSize="$5">Add</Paragraph>
-
-                <Paragraph fontSize="$5" px="$2" py="$1" bg="$accentColor">
-                    tamagui.config.ts
-                </Paragraph>
-
-                <Paragraph fontSize="$5">to root and follow the</Paragraph>
-
-                <XStack
-                    items="center"
-                    gap="$1.5"
-                    px="$2"
-                    py="$1"
-                    rounded="$3"
-                    bg="$green5"
-                    hoverStyle={{ bg: '$green6' }}
-                    pressStyle={{ bg: '$green4' }}
-                >
-                    <Anchor
-                        href="https://tamagui.dev/docs/core/configuration"
-                        textDecorationLine="none"
-                        color="$green10"
-                        fontSize="$5"
-                    >
-                        Configuration guide
-                    </Anchor>
-                    <ExternalLink size="$1" color="$green10" />
-                </XStack>
-
-                <Paragraph fontSize="$5" text="center">
-                    to configure your themes and tokens.
-                </Paragraph>
-            </XStack> */}
+            )}}
         </YStack>
     )
 }
