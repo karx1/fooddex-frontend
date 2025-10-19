@@ -43,6 +43,8 @@ import { ConstellationItemList } from "./endpoints/constellations/constellationI
 import { ConstellationItemListByConstellation } from "./endpoints/constellations/constellationItemListByConstellation";
 
 import { RecognizeFoodEndpoint } from "./endpoints/imgRecognition/recognizeFoods";
+import { FoodFetchByName } from "./endpoints/foods/foodByName";
+import { FoodTotalCaptures } from "./endpoints/captures/foodTotalCaptures";
 
 // Start a Hono app
 const app = new Hono<{ Bindings: Env }>();
@@ -65,6 +67,7 @@ openapi.post("/api/foods", FoodCreateEndpoint);
 openapi.get("/api/foods/:id", FoodFetch);
 openapi.put("/api/foods/:id", FoodUpdateEndpoint);
 openapi.delete("/api/foods/:id", FoodDelete);
+openapi.get("/api/foods/foodByName/:foodname", FoodFetchByName);
 
 // Register Capture endpoints
 openapi.get("/api/captures", CaptureList);
@@ -72,6 +75,7 @@ openapi.post("/api/captures", CaptureCreateEndpoint);
 openapi.get("/api/captures/:id", CaptureFetch);
 openapi.put("/api/captures/:id", CaptureUpdateEndpoint);
 openapi.delete("/api/captures/:id", CaptureDelete);
+openapi.get("/api/foods/:id/captures", FoodTotalCaptures);
 
 // Register User endpoints
 openapi.get("/api/users", UserList);

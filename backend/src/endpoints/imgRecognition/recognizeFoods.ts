@@ -5,6 +5,12 @@ import { type AppContext, FoodRecognitionData, FoodRecognitionRequest } from "..
 import { GoogleGenAI, createPartFromBase64, createPartFromText } from "@google/genai";
 import { createDB } from "../../database";
 
+import { randomUUID } from "crypto";
+
+
+const b64toBlob = (base64: string, type: string = 'application/octet-stream') => 
+  fetch(`data:${type};base64,${base64}`).then(res => res.blob())
+
 
 export class RecognizeFoodEndpoint extends OpenAPIRoute {
     schema = {
@@ -49,7 +55,6 @@ export class RecognizeFoodEndpoint extends OpenAPIRoute {
             foodSt += `${i}:${item.foodname},`
         })
 
-        console.log(foodSt)
 
         const prompt = `
             Return square bounding boxes around objects identified as 'food'
@@ -83,6 +88,10 @@ export class RecognizeFoodEndpoint extends OpenAPIRoute {
             box_2d, rel_id, and point must only be integers
         `.trim();
 
+        const uuid = randomUUID();
+        const imgBlob = await b64toBlob(data.body.image, data.body.image);
+        const img = await c.env.food_pictures.put(uuid, imgBlob)
+
 
         const response = await ai.models.generateContent({
             model: "gemini-robotics-er-1.5-preview",
@@ -95,6 +104,7 @@ export class RecognizeFoodEndpoint extends OpenAPIRoute {
                 responseMimeType: "application/json"
             }
         });
+
 
         return {
             success: true,
