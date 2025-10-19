@@ -1,13 +1,8 @@
 import { Star } from '@tamagui/lucide-icons';
 import { useState } from 'react'
 import { Image, SafeAreaView, StyleSheet, View } from 'react-native';
-<<<<<<< Updated upstream
 import { Button, H6, H3,H4, Paragraph, Separator, useTheme, XGroup, XStack, YStack, Avatar } from 'tamagui';
-import { useUser, CURRENT_USER_ID } from 'hooks/useApi';
-=======
-import { Button, H6, H3,H4, Paragraph, Separator, useTheme, XGroup, XStack, YStack } from 'tamagui';
 import { useUser, CURRENT_USER_ID, useConstellations } from 'hooks/useApi';
->>>>>>> Stashed changes
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import type { Constellation } from 'hooks/useApi';
 
@@ -138,11 +133,7 @@ export default function UserScreen() {
             </XGroup>
             {/* Conditionally render the selected view */}
             {selectedView === "constellations" ? (
-<<<<<<< Updated upstream
-                <ConstellationView />
-=======
             <ConstellationView constellations={constellationList} />
->>>>>>> Stashed changes
             ) : (
                 <DiscoveriesView />
             )}
