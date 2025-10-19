@@ -27,7 +27,7 @@ export class CaptureList extends OpenAPIRoute {
     async handle(c: AppContext) {
         const db = createDB(c.env.foodex_db);
 
-        const captures = await db.selectFrom("captures").selectAll().execute();
+        const captures = await db.selectFrom("captures").orderBy('captures.date', 'desc').selectAll().execute();
 
         return {
             success: true,
