@@ -1,7 +1,8 @@
 import { Star } from '@tamagui/lucide-icons';
 import { useState } from 'react'
 import { Image, StyleSheet, View } from 'react-native';
-import { Button, H2, H4, Paragraph, Separator, useTheme, XGroup, XStack, YStack } from 'tamagui';
+import { Button, H6, H3,H4, Paragraph, Separator, useTheme, XGroup, XStack, YStack } from 'tamagui';
+import { useUser, CURRENT_USER_ID } from 'hooks/useApi';
 
 const styles = StyleSheet.create({
     imageContainer: {
@@ -58,7 +59,9 @@ export default function UserScreen() {
     const theme = useTheme()
     const points = 1000 //TODO: change later
     const imageURL = "";
-    const name = "User Name"
+    const { data } = useUser(CURRENT_USER_ID);
+    const name = data?.result.user.username;
+    const id = data?.result.user.id;
     const addFriendClick = () => {
 
     }
@@ -74,9 +77,10 @@ export default function UserScreen() {
                 justify="center"
                 flexWrap="wrap"
                 gap="$1"
-                b="$5"
+                b="$3"
             >   
-                <H4> {name} </H4>
+                <H3> {name} </H3>
+                <Paragraph textAlign="center"> {id} </Paragraph>
                 <XStack
                     items="center"
                     justify="center"
@@ -96,10 +100,6 @@ export default function UserScreen() {
                     Add friend
                 </Button>
             </YStack>
-            
-            
-            
-            <Separator />
             <XGroup>
                 <XGroup.Item>
                     <Button onPress={() => setSelectedView("constellations")}>Constellations</Button>

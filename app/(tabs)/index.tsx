@@ -46,7 +46,7 @@ const NewCapturesSetup = ({isCapsLoading, is_error, llogbookEntries}) => {
     }
   return (
     <View>
-      <YStack flex={1} items="flex-start" gap="$8" px="$10" pt="$5" bg="$background">
+      <YStack flex={1} items="flex-start" gap="$8" px="$0" pt="$0" bg="$background">
         <H4>New Captures</H4>
           
       </YStack>
