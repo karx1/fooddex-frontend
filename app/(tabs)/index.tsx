@@ -82,6 +82,55 @@ const NewCapturesSetup = ({isCapsLoading, is_error, llogbookEntries}) => {
   )
 }
 
+const FeedSetup = () => {
+  const theme = useTheme()
+  const { data: capturesData, isLoading: isCapturesLoading, error: capturesError } = useCaptures()
+
+  if (isCapturesLoading) {
+    return (
+      <View flex={1} alignItems="center" justify="center" bg="$background">
+        <Text mt="$2">Loading Captures...</Text>
+        <ActivityIndicator size="large" />
+      </View>
+    )
+  }
+
+  if (capturesError) {
+    return (
+      <View flex={1} alignItems="center" justify="center" bg="$background">
+        <Text fontSize={20} color="$red10">
+          Error loading captures
+        </Text>
+        <Text mt="$2" color="$color10">
+          {capturesError.message}
+        </Text>
+      </View>
+    )
+  }
+
+  if (!capturesData?.result.captures || capturesData.result.captures.length === 0) {
+    return (
+      <YStack flex={1} items="flex-start" gap="$8" px="$10" pt="$5" bg="$background">
+        <H4>No Captures Found</H4>
+        <Paragraph>There are no captures available at the moment.</Paragraph>
+      </YStack>
+    )
+  }
+
+  return (
+    <FlatList
+      data={capturesData.result.captures}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => (
+        <ListItem
+          title={item.food}
+          subTitle={new Date(item.date).toLocaleDateString()}
+        />
+      )}
+    />
+  )
+}
+
 export default function HomeScreen() {
   // Fetch all the data required for the logbook from the API
   const { data: capturesData, isLoading: isCapturesLoading, error: capturesError } = useCaptures()
@@ -131,7 +180,7 @@ export default function HomeScreen() {
       llogbookEntries={logbookEntries} 
       />
 
-      
+      <FeedSetup />
     </YStack>
 )
 }
