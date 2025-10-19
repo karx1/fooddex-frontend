@@ -5,7 +5,10 @@ import { ToastControl } from 'components/CurrentToast';
 import { Link } from 'expo-router';
 import { Pressable } from 'react-native';
 import { Anchor, H4, H6, Paragraph, XStack, YStack, View, Text, Separator, ListItem, useTheme} from 'tamagui';
-import { useCaptures, useFavoritesByUser, useFood, useFoods, useUser, CURRENT_USER_ID } from '../../hooks/useApi';
+// 1. We need to import all necessary data-fetching hooks
+import { useCaptures, useFavoritesByUser, useFood, useFoods, useUser, useUsers, CURRENT_USER_ID } from '../../hooks/useApi';
+
+// --- (NewCapturesSetup component is unchanged as it does not contain the error) ---
  
 const NewCapturesSetup = ({isCapsLoading, is_error, llogbookEntries}) => {
   // Removed unused theme variable
@@ -67,14 +70,24 @@ const NewCapturesSetup = ({isCapsLoading, is_error, llogbookEntries}) => {
             ItemSeparatorComponent={() => <Separator marginInline="$4" />}
             renderItem={({ item }) => (
               <Pressable>
-                <YStack alignItems="center" mx="$4">
-                  <ListItem
-                    title={item.foodName}
-                    subTitle={item.captureDate}
-                    icon={item.isFavorite ? <Heart size={24} color="$red10" /> : undefined}
-                  />
-                </YStack>
-              </Pressable>
+  <YStack
+    p="$3" // Padding inside the border
+    borderWidth={1}
+    borderColor="$gray6" // Example border color
+    borderRadius="$4" // Example border radius for rounded corners
+    // Add margin/spacing here if needed to separate it from other elements
+    // e.g., mb="$3"
+  >
+    {/* Moved the existing YStack content alignment here for simplicity */}
+    <YStack alignItems="center">
+      <ListItem
+        title={item.foodName}
+        subTitle={item.captureDate}
+        icon={item.isFavorite ? <Heart size={24} color="$red10" /> : undefined}
+      />
+    </YStack>
+  </YStack>
+</Pressable>
             )}
           />
       </YStack>
@@ -82,20 +95,22 @@ const NewCapturesSetup = ({isCapsLoading, is_error, llogbookEntries}) => {
   )
 }
 
-function getUsername(name) {
-  const { data } = useUser(name);
-  return data?.result?.user?.username || 'Unknown User';
-}
 
-function getFoodname(name) {
-  const { data } = useFood(name);
-  return data?.result?.food.foodname || 'Unknown Food';
-}
+
+// --- FeedSetup component with refactored data fetching ---
+
 const FeedSetup = () => {
   const theme = useTheme()
+  // 2. Call all necessary hooks at the top level of the component
   const { data: capturesData, isLoading: isCapturesLoading, error: capturesError } = useCaptures()
+  // Assuming you need all users and all foods to resolve names for the feed
+  const { data: usersData, isLoading: isUsersLoading, error: usersError } = useUsers()
+  const { data: foodsData, isLoading: isFoodsLoading, error: foodsError } = useFoods()
+  
+  const isLoading = isCapturesLoading || isUsersLoading || isFoodsLoading;
+  const error = capturesError || usersError || foodsError;
 
-  if (isCapturesLoading) {
+  if (isLoading) {
     return (
       <View flex={1} alignItems="center" justify="center" bg="$background">
         <Text mt="$2">Loading Captures...</Text>
@@ -104,14 +119,14 @@ const FeedSetup = () => {
     )
   }
 
-  if (capturesError) {
+  if (error) {
     return (
       <View flex={1} alignItems="center" justify="center" bg="$background">
         <Text fontSize={20} color="$red10">
           Error loading captures
         </Text>
         <Text mt="$2" color="$color10">
-          {capturesError.message}
+          {error.message}
         </Text>
       </View>
     )
@@ -126,18 +141,23 @@ const FeedSetup = () => {
     )
   }
 
-
+  // 3. Use useMemo to process the data efficiently after all data is loaded
   const capturesWithUsernames = useMemo(() => {
-    if (!capturesData?.result.captures) {
+    if (!capturesData?.result.captures || !usersData?.result.users || !foodsData?.result.foods) {
       return [];
     }
 
+    // Create efficient lookup maps
+    const userMap = new Map(usersData.result.users.map((user) => [user.id, user.username]));
+    const foodMap = new Map(foodsData.result.foods.map((food) => [food.id, food.foodname]));
+
     return capturesData.result.captures.map((capture) => ({
       ...capture,
-      username: getUsername(capture.user),
-      foodname: getFoodname(capture.food)
+      // Resolve names using the maps
+      username: userMap.get(capture.user) || 'Unknown User',
+      foodname: foodMap.get(capture.food) || 'Unknown Food',
     }));
-  }, [capturesData]);
+  }, [capturesData, usersData, foodsData]); // Depend on all data sources
 
   return (
     <FlatList
@@ -146,29 +166,43 @@ const FeedSetup = () => {
       renderItem={({ item }) => (
         <YStack flex={1} items="flex-start" gap="$0" px="$10" pt="$5" bg="$background">
           <Paragraph>{item.username} got a new catch!</Paragraph>
-          <XStack alignItems="center" gap="$4">
-            <YStack>
-              <Image
-                source={{ uri: 'https://via.placeholder.com/50' }}
-                style={{ width: 50, height: 50, borderRadius: 25 }}
-              />
+          <Pressable>
+            <YStack
+              p="$3"
+              borderWidth={1}
+              borderColor="$gray6"
+              borderRadius="$4"
+            >
+              <XStack alignItems="center" gap="$4">
+                {/* 1. Image YStack - This sets the overall height on the left side */}
+                <YStack>
+                  <Image
+                    source={{ uri: 'https://via.placeholder.com/50' }}
+                    style={{ width: 50, height: 50, borderRadius: 25 }}
+                  />
+                </YStack>
+
+                {/* 2. Text YStack - ADD 'flex={1}' and 'alignSelf="stretch"' here */}
+                <YStack flex={1} alignSelf="stretch">
+                  <Text>{item.foodname}</Text>
+                  <Text
+                    fontSize="$2"
+                    color="$gray"
+                    ml="$2"
+                  >
+                    {new Date(item.date).toLocaleDateString()}
+                  </Text>
+                </YStack>
+              </XStack>
             </YStack>
-            <YStack>
-              <Text>{item.foodname}</Text>
-                <Text
-                  fontSize="$2"
-                  color="$gray9" // Use a gray token for a faded look
-                  ml="$2"
-                >
-                  {new Date(item.date).toLocaleDateString()}
-                </Text>
-            </YStack>
-          </XStack>
+          </Pressable>
         </YStack>
       )}
     />
   );
 }
+
+// --- (HomeScreen component is unchanged) ---
 
 export default function HomeScreen() {
   // Fetch all the data required for the logbook from the API
