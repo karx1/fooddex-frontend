@@ -1,14 +1,14 @@
 import '../tamagui-web.css'
 
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
+import { User } from '@tamagui/lucide-icons'
 import { Provider } from 'components/Provider'
 import { useFonts } from 'expo-font'
 import { Href, SplashScreen, Stack, useRouter } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
-import { Pressable, TouchableOpacity, useColorScheme } from 'react-native'
+import { useColorScheme } from 'react-native'
 import { Button, useTheme } from 'tamagui'
-import { User } from '@tamagui/lucide-icons'
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -65,7 +65,7 @@ function RootLayoutNav() {
           name="(tabs)"
           options={{
             headerShown: true,
-            headerTitle: 'FoodDex',
+            headerTitle: 'Foodex',
             headerTitleStyle: {
               color: theme.color.val,
             },
@@ -75,13 +75,13 @@ function RootLayoutNav() {
             headerRight:
               () => {
                 return (
-                    <Button 
-                      onPress={() => {
-                        router.navigate('/user' as Href) // cursed but it works
-                      }}
+                  <Button
+                    onPress={() => {
+                      router.navigate('/user' as Href) // cursed but it works
+                    }}
                     icon={User}
-                    >
-                    </Button>
+                  >
+                  </Button>
                 )
               }
           }}
