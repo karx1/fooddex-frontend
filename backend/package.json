@@ -9,6 +9,7 @@
     "cf-typegen": "wrangler types"
   },
   "dependencies": {
+    "@google/genai": "^1.25.0",
     "chanfana": "^2.6.3",
     "hono": "^4.6.20",
     "kysely": "^0.28.8",

@@ -1,4 +1,4 @@
-import { Bool, Int, OpenAPIRoute } from "chanfana";
+import { Bool, OpenAPIRoute, Str } from "chanfana";
 import { z } from "zod";
 import { createDB } from "../../database";
 import { type AppContext } from "../../types";
@@ -9,8 +9,8 @@ export class ConstellationItemDelete extends OpenAPIRoute {
         summary: "Delete a constellation item",
         request: {
             params: z.object({
-                constellationId: Int({ description: "Constellation ID" }),
-                foodId: Int({ description: "Food ID" }),
+                constellationId: Str({ description: "Constellation ID" }),
+                foodId: Str({ description: "Food ID" }),
             }),
         },
         responses: {

@@ -37,9 +37,13 @@ export class UserCreateEndpoint extends OpenAPIRoute {
         const data = await this.getValidatedData<typeof this.schema>();
         const db = createDB(c.env.foodex_db);
 
+        const id = crypto.randomUUID();
         const result = await db
             .insertInto("users")
-            .values(data.body)
+            .values({
+                ...data.body,
+                id,
+            })
             .returning([
                 "id",
                 "username",

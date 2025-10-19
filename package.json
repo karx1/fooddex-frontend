@@ -22,6 +22,7 @@
     "@tamagui/config": "^1.135.3",
     "@tamagui/lucide-icons": "^1.135.3",
     "@tamagui/toast": "^1.135.3",
+    "@tanstack/react-query": "^5.90.5",
     "babel-preset-expo": "~13.0.0",
     "burnt": "^0.12.2",
     "expo": "53.0.7",

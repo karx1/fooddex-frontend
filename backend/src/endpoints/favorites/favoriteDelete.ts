@@ -1,4 +1,4 @@
-import { Bool, Int, OpenAPIRoute } from "chanfana";
+import { Bool, OpenAPIRoute, Str } from "chanfana";
 import { z } from "zod";
 import { createDB } from "../../database";
 import { type AppContext } from "../../types";
@@ -9,8 +9,8 @@ export class FavoriteDelete extends OpenAPIRoute {
         summary: "Delete a favorite by user ID and food ID",
         request: {
             params: z.object({
-                userId: Int({ description: "User ID" }),
-                foodId: Int({ description: "Food ID" }),
+                userId: Str({ description: "User ID" }),
+                foodId: Str({ description: "Food ID" }),
             }),
         },
         responses: {

@@ -34,7 +34,8 @@ components:
         - foodname
       properties:
         id:
-          type: integer
+          type: string
+          format: uuid
           description: Unique identifier for the food
         rarity:
           type: integer
@@ -84,17 +85,20 @@ components:
         - user
       properties:
         id:
-          type: integer
+          type: string
+          format: uuid
           description: Unique identifier for the capture
         food:
-          type: integer
+          type: string
+          format: uuid
           description: ID of the captured food
         date:
           type: string
           format: date-time
           description: Date and time of capture
         user:
-          type: integer
+          type: string
+          format: uuid
           description: ID of the user who made the capture
     
     CaptureCreate:
@@ -105,12 +109,14 @@ components:
         - user
       properties:
         food:
-          type: integer
+          type: string
+          format: uuid
         date:
           type: string
           format: date-time
         user:
-          type: integer
+          type: string
+          format: uuid
     
     User:
       type: object
@@ -119,7 +125,8 @@ components:
         - username
       properties:
         id:
-          type: integer
+          type: string
+          format: uuid
           description: Unique identifier for the user
         username:
           type: string
@@ -140,10 +147,12 @@ components:
         - food
       properties:
         user:
-          type: integer
+          type: string
+          format: uuid
           description: ID of the user
         food:
-          type: integer
+          type: string
+          format: uuid
           description: ID of the favorited food
     
     Constellation:
@@ -153,10 +162,12 @@ components:
         - user
       properties:
         id:
-          type: integer
+          type: string
+          format: uuid
           description: Unique identifier for the constellation
         user:
-          type: integer
+          type: string
+          format: uuid
           description: ID of the user who owns the constellation
     
     ConstellationCreate:
@@ -165,7 +176,8 @@ components:
         - user
       properties:
         user:
-          type: integer
+          type: string
+          format: uuid
     
     ConstellationItem:
       type: object
@@ -174,10 +186,12 @@ components:
         - constellation
       properties:
         food:
-          type: integer
+          type: string
+          format: uuid
           description: ID of the food in the constellation
         constellation:
-          type: integer
+          type: string
+          format: uuid
           description: ID of the constellation
     
     SuccessResponse:
@@ -256,7 +270,8 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
+            format: uuid
       responses:
         '200':
           description: Food details
@@ -287,7 +302,8 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
+            format: uuid
       requestBody:
         required: true
         content:
@@ -324,7 +340,8 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
+            format: uuid
       responses:
         '200':
           description: Food deleted
@@ -437,12 +454,14 @@ paths:
               type: object
               properties:
                 food:
-                  type: integer
+                  type: string
+                  format: uuid
                 date:
                   type: string
                   format: date-time
                 user:
-                  type: integer
+                  type: string
+                  format: uuid
       responses:
         '200':
           description: Updated capture
@@ -690,7 +709,8 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
+            format: uuid
       responses:
         '200':
           description: User's favorites
@@ -719,12 +739,14 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
+            format: uuid
         - name: foodId
           in: path
           required: true
           schema:
-            type: integer
+            type: string
+            format: uuid
       responses:
         '200':
           description: Favorite deleted
@@ -837,7 +859,8 @@ paths:
               type: object
               properties:
                 user:
-                  type: integer
+                  type: string
+                  format: uuid
       responses:
         '200':
           description: Updated constellation
@@ -941,7 +964,8 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
+            format: uuid
       responses:
         '200':
           description: Constellation items
@@ -970,12 +994,14 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
+            format: uuid
         - name: foodId
           in: path
           required: true
           schema:
-            type: integer
+            type: string
+            format: uuid
       responses:
         '200':
           description: Constellation item deleted

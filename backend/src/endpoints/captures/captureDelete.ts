@@ -1,4 +1,4 @@
-import { Bool, Int, OpenAPIRoute } from "chanfana";
+import { Bool, OpenAPIRoute, Str } from "chanfana";
 import { z } from "zod";
 import { createDB } from "../../database";
 import { type AppContext } from "../../types";
@@ -9,7 +9,7 @@ export class CaptureDelete extends OpenAPIRoute {
         summary: "Delete a capture by ID",
         request: {
             params: z.object({
-                id: Int({ description: "Capture ID" }),
+                id: Str({ description: "Capture ID" }),
             }),
         },
         responses: {

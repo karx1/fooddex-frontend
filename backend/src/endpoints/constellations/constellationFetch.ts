@@ -1,4 +1,4 @@
-import { Bool, Int, OpenAPIRoute } from "chanfana";
+import { Bool, OpenAPIRoute, Str } from "chanfana";
 import { z } from "zod";
 import { createDB } from "../../database";
 import { type AppContext, Constellation } from "../../types";
@@ -9,7 +9,7 @@ export class ConstellationFetch extends OpenAPIRoute {
         summary: "Get a single constellation by ID",
         request: {
             params: z.object({
-                id: Int({ description: "Constellation ID" }),
+                id: Str({ description: "Constellation ID" }),
             }),
         },
         responses: {

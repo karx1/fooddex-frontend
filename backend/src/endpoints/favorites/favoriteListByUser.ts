@@ -1,4 +1,4 @@
-import { Bool, Int, OpenAPIRoute } from "chanfana";
+import { Bool, OpenAPIRoute, Str } from "chanfana";
 import { z } from "zod";
 import { createDB } from "../../database";
 import { type AppContext, Favorite } from "../../types";
@@ -9,7 +9,7 @@ export class FavoriteListByUser extends OpenAPIRoute {
         summary: "Get all favorites for a user",
         request: {
             params: z.object({
-                userId: Int({ description: "User ID" }),
+                userId: Str({ description: "User ID" }),
             }),
         },
         responses: {

@@ -3,7 +3,7 @@
 
 -- Foods Table
 CREATE TABLE IF NOT EXISTS foods (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id TEXT PRIMARY KEY,
   rarity INTEGER NOT NULL,
   origin VARCHAR NOT NULL,
   foodname VARCHAR NOT NULL,
@@ -12,24 +12,24 @@ CREATE TABLE IF NOT EXISTS foods (
 
 -- Users Table
 CREATE TABLE IF NOT EXISTS users (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id TEXT PRIMARY KEY,
   username VARCHAR NOT NULL UNIQUE
 );
 
 -- Captures Table
 CREATE TABLE IF NOT EXISTS captures (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  food INTEGER NOT NULL,
+  id TEXT PRIMARY KEY,
+  food TEXT NOT NULL,
   date DATETIME NOT NULL,
-  user INTEGER NOT NULL,
+  user TEXT NOT NULL,
   FOREIGN KEY (food) REFERENCES foods(id) ON DELETE CASCADE,
   FOREIGN KEY (user) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- Favorites Table (junction table)
 CREATE TABLE IF NOT EXISTS favorites (
-  user INTEGER NOT NULL,
-  food INTEGER NOT NULL,
+  user TEXT NOT NULL,
+  food TEXT NOT NULL,
   PRIMARY KEY (user, food),
   FOREIGN KEY (user) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (food) REFERENCES foods(id) ON DELETE CASCADE
@@ -37,15 +37,15 @@ CREATE TABLE IF NOT EXISTS favorites (
 
 -- Constellations Table
 CREATE TABLE IF NOT EXISTS constellations (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  user INTEGER NOT NULL,
+  id TEXT PRIMARY KEY,
+  user TEXT NOT NULL,
   FOREIGN KEY (user) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- Constellation Items Table (junction table)
 CREATE TABLE IF NOT EXISTS constellation_items (
-  food INTEGER NOT NULL,
-  constellation INTEGER NOT NULL,
+  food TEXT NOT NULL,
+  constellation TEXT NOT NULL,
   PRIMARY KEY (food, constellation),
   FOREIGN KEY (food) REFERENCES foods(id) ON DELETE CASCADE,
   FOREIGN KEY (constellation) REFERENCES constellations(id) ON DELETE CASCADE

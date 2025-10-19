@@ -1,4 +1,4 @@
-import { Bool, Int, OpenAPIRoute } from "chanfana";
+import { Bool, OpenAPIRoute, Str } from "chanfana";
 import { z } from "zod";
 import { createDB } from "../../database";
 import { type AppContext, Food, FoodUpdate } from "../../types";
@@ -9,7 +9,7 @@ export class FoodUpdateEndpoint extends OpenAPIRoute {
         summary: "Update a food by ID",
         request: {
             params: z.object({
-                id: Int({ description: "Food ID" }),
+                id: Str({ description: "Food ID" }),
             }),
             body: {
                 content: {

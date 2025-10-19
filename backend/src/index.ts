@@ -41,6 +41,8 @@ import { ConstellationItemDelete } from "./endpoints/constellations/constellatio
 import { ConstellationItemList } from "./endpoints/constellations/constellationItemList";
 import { ConstellationItemListByConstellation } from "./endpoints/constellations/constellationItemListByConstellation";
 
+import { RecognizeFoodEndpoint } from "./endpoints/imgRecognition/recognizeFoods";
+
 // Start a Hono app
 const app = new Hono<{ Bindings: Env }>();
 
@@ -88,6 +90,8 @@ openapi.get("/api/constellation-items", ConstellationItemList);
 openapi.post("/api/constellation-items", ConstellationItemCreate);
 openapi.get("/api/constellation-items/constellation/:constellationId", ConstellationItemListByConstellation);
 openapi.delete("/api/constellation-items/constellation/:constellationId/food/:foodId", ConstellationItemDelete);
+
+openapi.post("/api/recognizeFood", RecognizeFoodEndpoint);
 
 // Export the Hono app
 export default app;

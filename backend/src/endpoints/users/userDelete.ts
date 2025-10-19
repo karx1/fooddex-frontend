@@ -1,4 +1,4 @@
-import { Bool, Int, OpenAPIRoute } from "chanfana";
+import { Bool, OpenAPIRoute, Str } from "chanfana";
 import { z } from "zod";
 import { createDB } from "../../database";
 import { type AppContext } from "../../types";
@@ -9,7 +9,7 @@ export class UserDelete extends OpenAPIRoute {
         summary: "Delete a user by ID",
         request: {
             params: z.object({
-                id: Int({ description: "User ID" }),
+                id: Str({ description: "User ID" }),
             }),
         },
         responses: {
