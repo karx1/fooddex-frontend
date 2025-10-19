@@ -1,13 +1,18 @@
 import { Button, Card, H2, H3, Input, Paragraph, Stack, Text, XStack, YStack, Avatar, View, Image } from 'tamagui'
-import { X, Menu, Camera, Plus } from '@tamagui/lucide-icons'
-import { router, useLocalSearchParams } from 'expo-router'
+import { X, Menu, Camera, Plus, Trash } from '@tamagui/lucide-icons'
+import { Route, router, useLocalSearchParams } from 'expo-router'
 import { ActivityIndicator, TouchableOpacity } from 'react-native'
-import { BUCKET_PREFIX, CaptureCreate, CURRENT_USER_ID, useCreateCapture, useFoodByName, useFoodTotalCaptures } from 'hooks/useApi';
+import { BUCKET_PREFIX, CaptureCreate, CURRENT_USER_ID, useCreateCapture, useDeleteCapture, useFoodByName, useFoodTotalCaptures } from 'hooks/useApi';
 import { useEffect, useMemo, useState } from 'react';
 
+type FoodPicScreenParams = {
+  foodname: string;
+  image_id: string;
+  show_add?: string;
+}
+
 export default function FoodPicScreen() {
-  const params = useLocalSearchParams();
-  const { foodname, image_id } = params;
+  const { foodname, image_id, show_add } = useLocalSearchParams<FoodPicScreenParams>();
   const {data: foodData, isLoading, error} = useFoodByName(foodname as string);
   const [uploadLoading, setUploadLoading] = useState(false);
 
@@ -20,6 +25,8 @@ export default function FoodPicScreen() {
       return null;
     }
   }, [isLoading, foodData]);
+
+  const parsedShowAdd = useMemo(() => show_add && show_add === '1', [show_add]);
 
   const { data: capturesData, isLoading: isCapturesLoading, error: capturesError } = useFoodTotalCaptures(food?.id || '', {
     enabled: !!food,
@@ -59,6 +66,23 @@ export default function FoodPicScreen() {
 
     captureCreateMutator.mutate(capture);
   };
+
+  const captureDeleteMutator = useDeleteCapture({
+    onSuccess: () => {
+      setUploadLoading(false);
+      console.log('Capture deleted successfully!');
+      router.back();
+    },
+    onError: (error) => {
+      console.error('Failed to delete capture:', error.message);
+    },
+  });
+
+  const deleteCapture = () => {
+    setUploadLoading(true);
+    captureDeleteMutator.mutate(food?.id!);
+  };
+
 
   if (isLoading || isCapturesLoading) {
     return (
@@ -147,9 +171,14 @@ export default function FoodPicScreen() {
             </XStack>
           </YStack> */}
 
-          <Button icon={Plus} mt="$3" onPress={() => createCapture()} disabled={uploadLoading}>
-            {uploadLoading ? 'Adding...' : 'Add'}
-          </Button>
+          {parsedShowAdd ?
+            <Button icon={Plus} mt="$3" onPress={() => createCapture()} disabled={uploadLoading}>
+              {uploadLoading ? 'Adding...' : 'Add'}
+            </Button> :
+            <Button icon={Trash} mt="$3" onPress={() => deleteCapture()} disabled={uploadLoading}>
+              {uploadLoading ? 'Removing...' : 'Remove'}
+            </Button>
+          }
         </YStack>
       </Card>
 

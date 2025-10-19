@@ -123,7 +123,8 @@ export default function App() {
                                 pathname: '/foodcard',
                                 params: {
                                     foodname: poi.label,
-                                    image_id: pois?.image_id
+                                    image_id: pois?.image_id,
+                                    show_add: '1',
                                 }
                             });
                         }}
