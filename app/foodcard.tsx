@@ -2,13 +2,14 @@ import { Button, Card, H2, H3, Input, Paragraph, Stack, Text, XStack, YStack, Av
 import { X, Menu, Camera, Plus } from '@tamagui/lucide-icons'
 import { router, useLocalSearchParams } from 'expo-router'
 import { ActivityIndicator, TouchableOpacity } from 'react-native'
-import { BUCKET_PREFIX, useFoodByName, useFoodTotalCaptures } from 'hooks/useApi';
-import { useEffect, useMemo } from 'react';
+import { BUCKET_PREFIX, CaptureCreate, CURRENT_USER_ID, useCreateCapture, useFoodByName, useFoodTotalCaptures } from 'hooks/useApi';
+import { useEffect, useMemo, useState } from 'react';
 
 export default function FoodPicScreen() {
   const params = useLocalSearchParams();
   const { foodname, image_id } = params;
   const {data: foodData, isLoading, error} = useFoodByName(foodname as string);
+  const [uploadLoading, setUploadLoading] = useState(false);
 
   const food = useMemo(() => {
     if (!isLoading) {
@@ -34,6 +35,30 @@ export default function FoodPicScreen() {
   }, [isCapturesLoading, capturesData]);
 
   const imageUrl = `${BUCKET_PREFIX}/${image_id}`;
+
+  const captureCreateMutator = useCreateCapture({
+    onSuccess: () => {
+      setUploadLoading(false);
+      console.log('Capture created successfully!');
+      router.back();
+    },
+    onError: (error) => {
+      console.error('Failed to create capture:', error.message);
+    },
+  })
+
+  const createCapture = () => {
+    setUploadLoading(true);
+    const capture: CaptureCreate = {
+      food: food?.id!,
+      date: new Date().toISOString(),
+      user: CURRENT_USER_ID, // hardcoding for now, very very very hacky
+      image_url: imageUrl,
+    };
+
+
+    captureCreateMutator.mutate(capture);
+  };
 
   if (isLoading || isCapturesLoading) {
     return (
@@ -122,8 +147,8 @@ export default function FoodPicScreen() {
             </XStack>
           </YStack> */}
 
-          <Button icon={Plus} mt="$3">
-            Add
+          <Button icon={Plus} mt="$3" onPress={() => createCapture()} disabled={uploadLoading}>
+            {uploadLoading ? 'Adding...' : 'Add'}
           </Button>
         </YStack>
       </Card>

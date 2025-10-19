@@ -262,9 +262,9 @@ export function useCreateCapture(
                 method: 'POST',
                 body: JSON.stringify(data),
             }),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['captures'] });
-        },
+        // onSuccess: () => {
+        //     queryClient.invalidateQueries({ queryKey: ['captures'] });
+        // },
         ...options,
     });
 }
