@@ -1,12 +1,59 @@
 import { Button, Card, H2, H3, Input, Paragraph, Stack, Text, XStack, YStack, Avatar } from 'tamagui'
 import { X, Menu, Camera, Plus } from '@tamagui/lucide-icons'
 import { router, useLocalSearchParams } from 'expo-router'
-import { TouchableOpacity } from 'react-native'
+import { ActivityIndicator, TouchableOpacity } from 'react-native'
+import { useFoodByName, useFoodTotalCaptures } from 'hooks/useApi';
+import { useEffect, useMemo } from 'react';
 
 export default function FoodPicScreen() {
   const params = useLocalSearchParams();
-  const { foodId } = params;
+  const { foodname } = params;
+  const {data: foodData, isLoading, error} = useFoodByName(foodname as string);
 
+  const food = useMemo(() => {
+    if (!isLoading) {
+      if (!foodData?.result.food) return null;
+      console.log(foodData);
+      return foodData.result.food;
+    } else {
+      return null;
+    }
+  }, [isLoading, foodData]);
+
+  const { data: capturesData, isLoading: isCapturesLoading, error: capturesError } = useFoodTotalCaptures(food?.id || '', {
+    enabled: !!food,
+  });
+
+  const captures = useMemo(() => {
+    if (!isCapturesLoading) {
+      console.log(capturesData);
+      return capturesData?.result.captures;
+    } else {
+      return null;
+    }
+  }, [isCapturesLoading, capturesData]);
+
+  if (isLoading || isCapturesLoading) {
+    return (
+      <YStack flex={1} ai="center" jc="center" bg="$background">
+          <Text mt="$2">Loading Logbook...</Text>
+          <ActivityIndicator size="large" />
+      </YStack>
+    )
+  }
+
+  if (error || capturesError) {
+    return (
+      <YStack flex={1} alignItems="center" justify="center" bg="$background">
+        <Text fontSize={20} color="$red10">
+          Error loading data
+        </Text>
+        <Text mt="$2" color="$color10">
+          {error?.message || capturesError?.message!}
+        </Text>
+      </YStack>
+    )
+  }
 
   return (
     <YStack flex={1} bg="$background" p="$4" space="$4">
@@ -23,27 +70,27 @@ export default function FoodPicScreen() {
       {/* Food Info Card */}
       <Card p="$4" bordered>
         <YStack space="$3">
-          <H3>{foodId}</H3>
+          <H3>{food?.foodname}</H3>
 
           <XStack justify="space-between" ai="center">
             <YStack>
-              <Text color="$color10">Rating</Text>
-              <Text fontWeight="700">4 🌙</Text>
+              <Text color="$color10">Rarity</Text>
+              <Text fontWeight="700">{"🌙".repeat(food?.rarity!)}</Text>
             </YStack>
 
             <YStack>
               <Text color="$color10">Origin</Text>
-              <Text>America</Text>
+              <Text>{food?.origin}</Text>
             </YStack>
 
             <YStack>
               <Text color="$color10">Captures</Text>
-              <Text>1.5 M</Text>
+              <Text>{captures}</Text>
             </YStack>
           </XStack>
 
           <Paragraph color="$color10" mt="$2">
-            AI description...
+            {food?.description}
           </Paragraph>
 
           {/* <YStack mt="$3">

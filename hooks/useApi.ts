@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient, type UseMutationOptions, type UseQueryOptions } from '@tanstack/react-query';
+import { Use } from 'react-native-svg';
 
 // ============================================================================
 // Types
@@ -100,6 +101,7 @@ export type FoodRecognitionData = {
     box_2d: number[];
     label: string;
     relabel: number;
+    rel_id: number;
 }[];
 
 // ============================================================================
@@ -144,6 +146,15 @@ export function useFood(id: string, options?: UseQueryOptions<ApiResponse<{ food
         queryKey: ['foods', id],
         queryFn: () => fetchApi<ApiResponse<{ food: Food }>>(`/api/foods/${id}`),
         enabled: !!id,
+        ...options,
+    });
+}
+
+export function useFoodByName(foodname: string, options?: UseQueryOptions<ApiResponse<{ food: Food }>, Error>) {
+    return useQuery({
+        queryKey: ['foods', 'name', foodname],
+        queryFn: () => fetchApi<ApiResponse<{ food: Food }>>(`/api/foods/foodByName/${encodeURIComponent(foodname)}`),
+        enabled: !!foodname,
         ...options,
     });
 }
@@ -275,6 +286,17 @@ export function useDeleteCapture(
             queryClient.invalidateQueries({ queryKey: ['captures'] });
             queryClient.invalidateQueries({ queryKey: ['captures', id] });
         },
+        ...options,
+    });
+}
+
+export function useFoodTotalCaptures(
+    id: string | undefined,
+    options?: Omit<UseQueryOptions<ApiResponse<{ captures: number }>, Error>, 'queryKey' | 'queryFn'>
+) {
+    return useQuery({
+        queryKey: ['foods', id, 'captures'],
+        queryFn: () => fetchApi<ApiResponse<{ captures: number }>>(`/api/foods/${id}/captures`),
         ...options,
     });
 }
