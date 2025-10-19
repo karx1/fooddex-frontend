@@ -1,30 +1,26 @@
 import { Heart } from "@tamagui/lucide-icons";
+import { router } from 'expo-router';
 import { useMemo } from "react";
 import { ActivityIndicator, FlatList } from "react-native";
 import {
+  Button,
+  Card,
   H4,
-  ListItem,
-  Separator,
+  H5,
+  Image,
+  Paragraph,
   Text,
   View,
-  YStack,
-  Card,
-  H2,
-  Paragraph,
   XStack,
-  Button,
-  Image,
-  H3,
-  H5,
+  YStack
 } from "tamagui";
 import {
+  BUCKET_PREFIX,
+  CURRENT_USER_ID,
   useCaptures,
   useFavoritesByUser,
-  useFoods,
-  CURRENT_USER_ID,
-  BUCKET_PREFIX
+  useFoods
 } from "../../hooks/useApi";
-import { router } from 'expo-router';
 
 export default function LogbookScreen() {
   // Fetch all the data required for the logbook from the API
@@ -32,16 +28,19 @@ export default function LogbookScreen() {
     data: capturesData,
     isLoading: isCapturesLoading,
     error: capturesError,
+    refetch: refetchCaptures,
   } = useCaptures();
   const {
     data: foodsData,
     isLoading: isFoodsLoading,
     error: foodsError,
+    refetch: refetchFoods,
   } = useFoods();
   const {
     data: favoritesData,
     isLoading: isFavoritesLoading,
     error: favoritesError,
+    refetch: refetchFavorites,
   } = useFavoritesByUser(CURRENT_USER_ID);
 
   // Consolidate loading and error states from all API calls
@@ -140,6 +139,12 @@ export default function LogbookScreen() {
         contentContainerStyle={{
           paddingBottom: 16,
         }}
+        onRefresh={() => {
+          refetchCaptures();
+          refetchFoods();
+          refetchFavorites();
+        }}
+        refreshing={isLoading}
         renderItem={({ item }) => (
           <Card
             elevate
@@ -159,7 +164,7 @@ export default function LogbookScreen() {
               <Paragraph theme="alt2">{item.captureDate}</Paragraph>
             </Card.Header>
             <Card.Footer padded>
-                {item.isFavorite && (
+              {item.isFavorite && (
                 <View
                   backgroundColor="$background"
                   padding="$3"
@@ -172,13 +177,13 @@ export default function LogbookScreen() {
               )}
               <XStack flex={1} />
               <Button borderRadius="$10" onPress={() => router.push({
-                                pathname: '/foodcard',
-                                params: {
-                                    foodname: item.foodName,
-                                    image_id: item.image_url.replaceAll(BUCKET_PREFIX + '/', ''),
-                                    show_add: 'false',
-                                    capture_id: item.id
-                                }
+                pathname: '/foodcard',
+                params: {
+                  foodname: item.foodName,
+                  image_id: item.image_url.replaceAll(BUCKET_PREFIX + '/', ''),
+                  show_add: 'false',
+                  capture_id: item.id
+                }
               })}>Details</Button>
             </Card.Footer>
 
