@@ -58,6 +58,7 @@ export class ConstellationUpdateEndpoint extends OpenAPIRoute {
             .returning([
                 "id",
                 "user",
+                "name",
             ])
             .executeTakeFirst();
 

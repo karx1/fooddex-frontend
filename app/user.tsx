@@ -67,7 +67,7 @@ function ConstellationView (props){
             <H4>Constellations</H4>
             <XStack>
                 {constellations.map(item => (
-                    <Paragraph key={item.id}>{item.id}</Paragraph>
+                    <Paragraph key={item.id}>{item.name}</Paragraph>
                 ))}
             </XStack>
         </View>

@@ -79,14 +79,17 @@ export interface Favorite {
 export interface Constellation {
     id: string;
     user: string;
+    name: string;
 }
 
 export interface ConstellationCreate {
     user: string;
+    name: string;
 }
 
 export interface ConstellationUpdate {
     user?: string;
+    name?: string;
 }
 
 export interface ConstellationItem {

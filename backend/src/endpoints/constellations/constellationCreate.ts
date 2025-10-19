@@ -47,6 +47,7 @@ export class ConstellationCreateEndpoint extends OpenAPIRoute {
             .returning([
                 "id",
                 "user",
+                "name",
             ])
             .executeTakeFirstOrThrow();
 

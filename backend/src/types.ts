@@ -47,6 +47,7 @@ export const Favorite = z.object({
 export const Constellation = z.object({
 	id: Str(),
 	user: Str(),
+	name: Str(),
 });
 
 export const ConstellationCreate = Constellation.omit({ id: true });
@@ -100,6 +101,7 @@ export interface Database {
 	constellations: {
 		id: string;
 		user: string;
+		name: string;
 	};
 	constellation_items: {
 		food: string;
