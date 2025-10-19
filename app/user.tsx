@@ -52,7 +52,7 @@ function DiscoveriesView (){
         <View flex={1} alignItems="left" justify="center" bg="$background">
             <H4>Discoveries</H4>
             <XStack>
-            
+
             </XStack>
         </View>
 
@@ -138,7 +138,7 @@ export default function UserScreen() {
                 )
             ) : (
                 <DiscoveriesView />
-            )}}
+            )}
         </YStack>
     )
 }
