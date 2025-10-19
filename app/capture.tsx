@@ -99,9 +99,7 @@ export default function App() {
 
             {pois?.result.map((poi, index) => {
                 if (!poi) return null;
-                // if (poi.relabel == 1) return null;
-                if (poi.rel_id == 0 && poi.relabel == 1 && poi.label !== "Pizza") return null; // temp hacky fix for relabeling issue
-                console.log("SHIT")
+                if (poi.relabel == 1) return null;
 
                 const tx = poi.box_2d[1] / 10;
                 const ty = poi.box_2d[0] / 10;
