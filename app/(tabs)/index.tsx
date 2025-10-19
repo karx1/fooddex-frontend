@@ -155,7 +155,13 @@ const FeedSetup = () => {
             </YStack>
             <YStack>
               <Text>{item.foodname}</Text>
-              <Text>{new Date(item.date).toLocaleDateString()}</Text>
+                <Text
+                  fontSize="$2"
+                  color="$gray9" // Use a gray token for a faded look
+                  ml="$2"
+                >
+                  {new Date(item.date).toLocaleDateString()}
+                </Text>
             </YStack>
           </XStack>
         </YStack>
