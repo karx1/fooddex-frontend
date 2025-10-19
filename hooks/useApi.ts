@@ -95,7 +95,9 @@ export interface ApiErrorResponse {
 // Configuration
 // ============================================================================
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
+// const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
+const API_BASE_URL = "https://backend.brandonwees.workers.dev"
+// const API_BASE_URL = "http://localhost:8787"
 
 async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {

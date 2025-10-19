@@ -1,6 +1,8 @@
-import { ExternalLink } from '@tamagui/lucide-icons'
-import { Anchor, H2, Paragraph, XStack, YStack } from 'tamagui'
-import { ToastControl } from 'components/CurrentToast'
+import { ExternalLink, Settings } from '@tamagui/lucide-icons';
+import { ToastControl } from 'components/CurrentToast';
+import { Link } from 'expo-router';
+import { Pressable } from 'react-native';
+import { Anchor, H2, Paragraph, XStack, YStack } from 'tamagui';
 
 export default function TabOneScreen() {
   return (
@@ -45,6 +47,12 @@ export default function TabOneScreen() {
           </Anchor>
           <ExternalLink size="$1" color="$green10" />
         </XStack>
+
+        <Link href="/capture" asChild>
+          <Pressable>
+            <Settings mr="$3" />
+          </Pressable>
+        </Link>
 
         <Paragraph fontSize="$5" text="center">
           to configure your themes and tokens.

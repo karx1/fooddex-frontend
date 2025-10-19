@@ -1,17 +1,17 @@
 import '../tamagui-web.css'
 
-import { useEffect } from 'react'
-import { useColorScheme } from 'react-native'
-import { StatusBar } from 'expo-status-bar'
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
+import { Provider } from 'components/Provider'
 import { useFonts } from 'expo-font'
 import { Href, SplashScreen, Stack, useRouter } from 'expo-router'
-import { Provider } from 'components/Provider'
-import { Button, useTheme, YStack } from 'tamagui'
+import { StatusBar } from 'expo-status-bar'
+import { useEffect } from 'react'
+import { useColorScheme } from 'react-native'
+import { Button, useTheme } from 'tamagui'
 
 export {
   // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
+  ErrorBoundary
 } from 'expo-router'
 
 export const unstable_settings = {
@@ -41,7 +41,7 @@ export default function RootLayout() {
 
   return (
     <Providers>
-        <RootLayoutNav />
+      <RootLayoutNav />
     </Providers>
   )
 }
@@ -91,20 +91,9 @@ function RootLayoutNav() {
           }}
         />
 
+
         {/* Change this for the camera modal later */}
-        {/* <Stack.Screen
-          name="modal"
-          options={{
-            title: 'Tamagui + Expo',
-            presentation: 'modal',
-            animation: 'slide_from_right',
-            gestureEnabled: true,
-            gestureDirection: 'horizontal',
-            contentStyle: {
-              backgroundColor: theme.background.val,
-            },
-          }}
-        /> */}
+        <Stack.Screen name="capture" options={{ presentation: 'modal', title: 'Capture Food!' }} />
       </Stack>
     </ThemeProvider>
   )

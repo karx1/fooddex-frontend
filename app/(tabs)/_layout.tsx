@@ -1,6 +1,6 @@
-import { Book, BookOpen, House } from '@tamagui/lucide-icons'
-import { Tabs } from 'expo-router'
-import { useTheme } from 'tamagui'
+import { Book, BookOpen, House } from '@tamagui/lucide-icons';
+import { router, Tabs } from 'expo-router';
+import { useTheme } from 'tamagui';
 
 export default function TabLayout() {
   const theme = useTheme()
@@ -26,6 +26,19 @@ export default function TabLayout() {
           title: 'Home',
           headerTitle: "",
           tabBarIcon: ({ color }) => <House color={color as any} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="dummy"
+        options={{
+          title: 'Capture',
+        }}
+        listeners={{
+          tabPress: (e) => {
+            e.preventDefault(); // Prevent default tab behavior
+            router.navigate("/capture")
+          },
         }}
       />
 
