@@ -97,6 +97,8 @@ function RootLayoutNav() {
         {/* Change this for the camera modal later */}
         <Stack.Screen name="capture" options={{ presentation: 'modal', headerShown: false }} />
         <Stack.Screen name="foodcard" options={{ presentation: 'modal', headerShown: false }} />
+        <Stack.Screen name="constellationView" options={{ presentation: 'modal', headerShown: false }} />
+        <Stack.Screen name="constellationAdd" options={{ presentation: 'modal', headerShown: false }} />
       </Stack>
     </ThemeProvider>
   )

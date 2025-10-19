@@ -1,9 +1,15 @@
 import { Star } from '@tamagui/lucide-icons';
 import { useState } from 'react'
 import { Image, SafeAreaView, StyleSheet, View } from 'react-native';
+<<<<<<< Updated upstream
 import { Button, H6, H3,H4, Paragraph, Separator, useTheme, XGroup, XStack, YStack, Avatar } from 'tamagui';
 import { useUser, CURRENT_USER_ID } from 'hooks/useApi';
+=======
+import { Button, H6, H3,H4, Paragraph, Separator, useTheme, XGroup, XStack, YStack } from 'tamagui';
+import { useUser, CURRENT_USER_ID, useConstellations } from 'hooks/useApi';
+>>>>>>> Stashed changes
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import type { Constellation } from 'hooks/useApi';
 
 const styles = StyleSheet.create({
     imageContainer: {
@@ -58,12 +64,15 @@ function DiscoveriesView (){
     )
 }
 
-function ConstellationView (){
+function ConstellationView (props){
+    const constellations: Constellation[] = props.constellations
     return (
         <View flex={1} alignItems="left" justify="center" bg="$background">
             <H4>Constellations</H4>
             <XStack>
-
+                {constellations.map(item => {
+                    <Paragraph>{item.id}</Paragraph>
+                })}
             </XStack>
         </View>
 
@@ -80,6 +89,8 @@ export default function UserScreen() {
     const addFriendClick = () => {
 
     }
+    const cdata = useConstellations();
+    const constellationList = cdata.data?.result.constellations;
     // State to track the currently selected view
     const [selectedView, setSelectedView] = useState<"constellations" | "discoveries">("constellations");
     return (
@@ -127,7 +138,11 @@ export default function UserScreen() {
             </XGroup>
             {/* Conditionally render the selected view */}
             {selectedView === "constellations" ? (
+<<<<<<< Updated upstream
                 <ConstellationView />
+=======
+            <ConstellationView constellations={constellationList} />
+>>>>>>> Stashed changes
             ) : (
                 <DiscoveriesView />
             )}
