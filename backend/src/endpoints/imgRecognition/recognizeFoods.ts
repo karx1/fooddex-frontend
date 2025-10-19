@@ -1,4 +1,4 @@
-import { Bool, OpenAPIRoute } from "chanfana";
+import { Bool, OpenAPIRoute, Uuid } from "chanfana";
 import { z } from "zod";
 import { type AppContext, FoodRecognitionData, FoodRecognitionRequest } from "../../types";
 
@@ -33,6 +33,7 @@ export class RecognizeFoodEndpoint extends OpenAPIRoute {
                         schema: z.object({
                             success: Bool(),
                             result: FoodRecognitionData,
+                            image_id: Uuid(),
                         }),
                     },
                 },
@@ -105,10 +106,10 @@ export class RecognizeFoodEndpoint extends OpenAPIRoute {
             }
         });
 
-
         return {
             success: true,
             result: JSON.parse(response.text),
+            image_id: img.key
         };
     }
 }

@@ -53,18 +53,21 @@ export interface Capture {
     food: string;
     date: string;
     user: string;
+    image_url: string;
 }
 
 export interface CaptureCreate {
     food: string;
     date: string;
     user: string;
+    image_url: string;
 }
 
 export interface CaptureUpdate {
     food?: string;
     date?: string;
     user?: string;
+    image_url?: string;
 }
 
 export interface Favorite {
@@ -93,6 +96,10 @@ export interface ConstellationItem {
 export interface ApiResponse<T> {
     success: boolean;
     result: T;
+}
+
+export type ImageApiResponse<T> = ApiResponse<T> & {
+    image_id: string;
 }
 
 export interface ApiErrorResponse {
@@ -582,12 +589,12 @@ export function useDeleteConstellationItem(
 
 
 export function useRecognizeFood(
-    request: FoodRecognitionRequest | null, options?: UseMutationOptions<ApiResponse<FoodRecognitionData>, Error>
+    request: FoodRecognitionRequest | null, options?: UseMutationOptions<ImageApiResponse<FoodRecognitionData>, Error>
 ) {
     return useQuery({
         queryKey: ['recognizeFood', request],
         queryFn: () =>
-            fetchApi<ApiResponse<FoodRecognitionData>>('/api/recognizeFood', {
+            fetchApi<ImageApiResponse<FoodRecognitionData>>('/api/recognizeFood', {
                 method: 'POST',
                 body: JSON.stringify(request),
             }),
