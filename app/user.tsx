@@ -1,9 +1,10 @@
-import { Star } from '@tamagui/lucide-icons';
+import { Star, X } from '@tamagui/lucide-icons';
 import { useState } from 'react'
 import { ActivityIndicator, Image, SafeAreaView, StyleSheet, View } from 'react-native';
 import { Button, H6, H3,H4, Paragraph, Separator, useTheme, XGroup, XStack, YStack, Avatar } from 'tamagui';
 import { useUser, CURRENT_USER_ID, useConstellations } from 'hooks/useApi';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 import type { Constellation } from 'hooks/useApi';
 
 const styles = StyleSheet.create({
@@ -85,11 +86,26 @@ export default function UserScreen() {
 
     }
     const {data: constellationData, isLoading } = useConstellations();
+    const goToUserIndex = () => {
+        // You should use router.back() to logically "return"
+        // If you specifically want to go to /home, use router.replace('/(tabs)/home')
+        router.back(); 
+    }
     // State to track the currently selected view
     const [selectedView, setSelectedView] = useState<"constellations" | "discoveries">("constellations");
     return (
         <YStack flex={1} items="center" gap="$8" px="$10" pt="$8" bg="$background">
-
+            <Button
+                size="$3" // Small button size
+                chromeless // Remove background and border for a clean icon look
+                icon={<X size="$1" />} // Use the X icon
+                onPress={() => router.back()} // Use router.back() to go to the previous screen
+                position="absolute" // Position independently of the flow
+                top="$4" // Distance from the top
+                right="$4" // Distance from the right
+                zIndex={10} // Ensure it's above other elements
+                circular // Make the button circular
+            />
             <Avatar circular size="$10">
                 <Avatar.Image src="https://pub-495a1a79b2634ef3ae2ea1e867730068.r2.dev/33dd913e-f522-4119-8665-69113412243f" />
                 
