@@ -1,4 +1,4 @@
-import { Book, BookOpen, House } from '@tamagui/lucide-icons';
+import { Book, BookOpen, Camera, House } from '@tamagui/lucide-icons';
 import { router, Tabs } from 'expo-router';
 import { useTheme } from 'tamagui';
 
@@ -33,6 +33,7 @@ export default function TabLayout() {
         name="dummy"
         options={{
           title: 'Capture',
+          tabBarIcon: ({ color }) => <Camera color={color as any} />,
         }}
         listeners={{
           tabPress: (e) => {

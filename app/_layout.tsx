@@ -84,16 +84,15 @@ function RootLayoutNav() {
           }}
         />
         <Stack.Screen
-          name="profile"
+          name="user"
           options={{
             headerShown: false,
-            headerTitle: 'Profile',
           }}
         />
 
 
         {/* Change this for the camera modal later */}
-        <Stack.Screen name="capture" options={{ presentation: 'modal', title: 'Capture Food!' }} />
+        <Stack.Screen name="capture" options={{ presentation: 'modal', headerShown: false }} />
       </Stack>
     </ThemeProvider>
   )

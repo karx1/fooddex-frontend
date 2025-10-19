@@ -53,7 +53,7 @@ export default function LogbookScreen() {
   // Display a loading indicator while data is being fetched
   if (isLoading) {
     return (
-      <View flex={1} verticalAlign="center" justify="center" bg="$background">
+      <View flex={1} alignItems="center" justify="center" bg="$background">
         <ActivityIndicator size="large" />
         <Text mt="$2">Loading Logbook...</Text>
       </View>
@@ -63,7 +63,7 @@ export default function LogbookScreen() {
   // Display an error message if any of the API calls fail
   if (error) {
     return (
-      <View flex={1} verticalAlign="center" justify="center" bg="$background">
+      <View flex={1} alignItems="center" justify="center" bg="$background">
         <Text fontSize={20} color="$red10">
           Error loading data
         </Text>
@@ -77,7 +77,7 @@ export default function LogbookScreen() {
   // Display a message if the user has no captures
   if (logbookEntries.length === 0) {
     return (
-      <View flex={1} verticalAlign="center" justify="center" bg="$background">
+      <View flex={1} alignItems="center" justify="center" bg="$background">
         <H4>Logbook is Empty</H4>
         <Text mt="$2" color="$color10">
           Go capture some new foods!

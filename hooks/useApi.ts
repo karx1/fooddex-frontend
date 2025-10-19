@@ -91,6 +91,20 @@ export interface ApiErrorResponse {
     error: string;
 }
 
+export interface FoodRecognitionRequest {
+    mimetype: string;
+    image: string;
+}
+
+export interface FoodRecognitionData {
+    imageUrl: string;
+    detections: {
+        box_2d: number[];
+        label: string;
+        relabel: number;
+    }[];
+}
+
 // ============================================================================
 // Configuration
 // ============================================================================
@@ -535,6 +549,22 @@ export function useDeleteConstellationItem(
             queryClient.invalidateQueries({ queryKey: ['constellationItems'] });
             queryClient.invalidateQueries({ queryKey: ['constellationItems', 'constellation', variables.constellationId] });
         },
+        ...options,
+    });
+}
+
+
+export function useRecognizeFood(
+    request: FoodRecognitionRequest | null, options?: UseMutationOptions<ApiResponse<FoodRecognitionData>, Error>
+) {
+    return useQuery({
+        queryKey: ['recognizeFood', request],
+        queryFn: () =>
+            fetchApi<ApiResponse<FoodRecognitionData>>('/api/recognizeFood', {
+                method: 'POST',
+                body: JSON.stringify(request),
+            }),
+        enabled: request !== null,
         ...options,
     });
 }

@@ -1,55 +1,112 @@
-import { ExternalLink } from '@tamagui/lucide-icons'
-import { ToastControl } from 'components/CurrentToast'
-import { Anchor, H2, Paragraph, XStack, YStack } from 'tamagui'
+import { Camera, X } from '@tamagui/lucide-icons';
+import { CameraCapturedPicture, CameraView, useCameraPermissions } from 'expo-camera';
+import { router } from 'expo-router';
+import { FoodRecognitionRequest, useRecognizeFood } from 'hooks/useApi';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, TouchableOpacity } from 'react-native';
+import { Button, Image, Text, View, } from 'tamagui';
 
-export default function Capture() {
+export default function App() {
+    const [permission, requestPermission] = useCameraPermissions();
+    const camera = useRef<CameraView>(null);
+    const [imageStats, setImageStats] = useState<CameraCapturedPicture | null>(null);
+    const [image, setImage] = useState<string | null>(null);
+    const [poiRequest, setPoiRequest] = useState<FoodRecognitionRequest | null>(null);
+    const { data: pois, isLoading } = useRecognizeFood(poiRequest);
+    const relativePOIs = useMemo(() => {
+        console.log(imageStats?.height, imageStats?.width);
+        return pois?.result.detections.map(detection => {
+            if (detection.relabel == 1) return null;
+
+            const [x1, y1, x2, y2] = detection.box_2d;
+            return {
+                x: x1,
+                y: y1,
+                width: x2 - x1,
+                height: y2 - y1,
+                label: detection.label,
+            };
+        });
+    }, [pois]);
+
+    useEffect(() => {
+        if (pois) {
+            console.log('POIs:', pois);
+        }
+    }, [pois]);
+
+    if (!permission) {
+        // Camera permissions are still loading.
+        return <View background={"black"} />;
+    }
+
+    if (!permission.granted) {
+        // Camera permissions are not granted yet.
+        return (
+            <View style={{
+                flex: 1,
+                justifyContent: 'center',
+            }}>
+                <Text>We need your permission to show the camera</Text>
+                <Button onPress={requestPermission}>Grant permission</Button>
+            </View>
+        );
+    }
+
+    async function capture() {
+        console.log('Capture photo');
+        try {
+            const photo = await camera.current?.takePictureAsync();
+            setImageStats(photo!);
+            setImage(photo!.uri);
+
+            const blob = await (await fetch(photo!.uri)).blob();
+            buildPOIRequest(blob);
+        } catch (error) {
+            console.error('Error capturing photo:', error);
+        }
+    }
+
+    function blobToBase64(blob: Blob): Promise<string> {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64 = (reader.result as string).split(',')[1]; // remove prefix
+                resolve(base64);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    }
+
+    async function buildPOIRequest(image: Blob) {
+        const b64image = await blobToBase64(image);
+        const json = {
+            mimetype: 'image/jpeg',
+            image: b64image
+        }
+        setPoiRequest(json);
+    }
+
     return (
-        <YStack flex={1} items="center" gap="$8" px="$10" pt="$5" bg="$background">
-            <H2>THIS IS THE CAPTURE PAGE!!!</H2>
+        <View style={{ flex: 1, justifyContent: 'center' }} >
+            {image ? <Image source={{ uri: image }} style={{ flex: 1 }} /> : <CameraView style={{ flex: 1 }} ref={camera} />}
 
-            <ToastControl />
+            {!!!image && <TouchableOpacity onPress={capture} style={{ position: 'absolute', bottom: 100, alignSelf: 'center', backgroundColor: "white", padding: 16, borderRadius: "100%" }}>
+                <Camera color="black" size={36} />
+            </TouchableOpacity>}
 
-            <XStack
-                items="center"
-                justify="center"
-                flexWrap="wrap"
-                gap="$1.5"
-                position="absolute"
-                b="$8"
-            >
-                <Paragraph fontSize="$5">Add</Paragraph>
+            <TouchableOpacity onPress={() => router.back()}
+                style={{ position: 'absolute', top: 20, right: 20, padding: 8, borderRadius: 8 }}>
+                <X color="white" size={32} />
+            </TouchableOpacity>
 
-                <Paragraph fontSize="$5" px="$2" py="$1" bg="$accentColor">
-                    tamagui.config.ts
-                </Paragraph>
-
-                <Paragraph fontSize="$5">to root and follow the</Paragraph>
-
-                <XStack
-                    items="center"
-                    gap="$1.5"
-                    px="$2"
-                    py="$1"
-                    rounded="$3"
-                    bg="$green5"
-                    hoverStyle={{ bg: '$green6' }}
-                    pressStyle={{ bg: '$green4' }}
-                >
-                    <Anchor
-                        href="https://tamagui.dev/docs/core/configuration"
-                        textDecorationLine="none"
-                        color="$green10"
-                        fontSize="$5"
-                    >
-                        Configuration guide
-                    </Anchor>
-                    <ExternalLink size="$1" color="$green10" />
-                </XStack>
-
-                <Paragraph fontSize="$5" text="center">
-                    to configure your themes and tokens.
-                </Paragraph>
-            </XStack>
-        </YStack>
-    )
+            {isLoading &&
+                <View
+                    style={{ position: 'absolute', top: "50%", left: "50%", transform: [{ translateX: -25 }, { translateY: -25 }], borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                    <ActivityIndicator size={50} />
+                </View>
+            }
+        </View>
+    );
 }
