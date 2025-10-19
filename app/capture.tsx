@@ -2,7 +2,7 @@ import { Camera, X } from '@tamagui/lucide-icons';
 import { CameraCapturedPicture, CameraView, useCameraPermissions } from 'expo-camera';
 import { router } from 'expo-router';
 import { FoodRecognitionRequest, useRecognizeFood } from 'hooks/useApi';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Button, Image, Text, View, } from 'tamagui';
 
@@ -12,28 +12,17 @@ export default function App() {
     const [imageStats, setImageStats] = useState<CameraCapturedPicture | null>(null);
     const [image, setImage] = useState<string | null>(null);
     const [poiRequest, setPoiRequest] = useState<FoodRecognitionRequest | null>(null);
-    const { data: pois, isLoading } = useRecognizeFood(poiRequest);
-    const relativePOIs = useMemo(() => {
-        console.log(imageStats?.height, imageStats?.width);
-        return pois?.result.detections.map(detection => {
-            if (detection.relabel == 1) return null;
+    const { data: pois, isLoading, error } = useRecognizeFood(poiRequest);
 
-            const [x1, y1, x2, y2] = detection.box_2d;
-            return {
-                x: x1,
-                y: y1,
-                width: x2 - x1,
-                height: y2 - y1,
-                label: detection.label,
-            };
-        });
-    }, [pois]);
 
     useEffect(() => {
+        if (error) {
+            console.error('Error recognizing foods:', error);
+        }
         if (pois) {
             console.log('POIs:', pois);
         }
-    }, [pois]);
+    }, [pois, error]);
 
     if (!permission) {
         // Camera permissions are still loading.
@@ -107,6 +96,45 @@ export default function App() {
                     <ActivityIndicator size={50} />
                 </View>
             }
+
+            {pois?.result.map((poi, index) => {
+                if (!poi) return null;
+                console.log("SHIT")
+
+                const tx = poi.box_2d[1] / 10;
+                const ty = poi.box_2d[0] / 10;
+                const bx = poi.box_2d[3] / 10;
+                const by = poi.box_2d[2] / 10;
+                console.log({ tx, ty, bx, by });
+
+                return (
+                    <View key={index} style={{
+                        position: 'absolute',
+                        top: ty + "%",
+                        left: tx + "%",
+                        width: (bx - tx) + "%",
+                        height: (by - ty) + "%",
+                    }}
+                        onPress={() => console.log(poi.label)}
+                    >
+                        <Text
+                            style={{
+                                color: 'white',
+                                fontSize: 24,
+                                fontWeight: 'bold',
+                                backgroundColor: 'rgba(0,0,0,0.8)',
+                                alignSelf: 'center',
+                                alignContent: 'center',
+                                paddingHorizontal: 8,
+                                paddingVertical: 4,
+                                borderRadius: 6,
+                            }}
+                        >
+                            {poi.label}
+                        </Text>
+                    </View>
+                );
+            })}
         </View>
     );
 }

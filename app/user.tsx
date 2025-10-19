@@ -1,6 +1,6 @@
 import { Star } from '@tamagui/lucide-icons';
 import { Image, StyleSheet, View } from 'react-native';
-import { Button, H2, Paragraph, Separator, useTheme, XGroup, XStack, YStack } from 'tamagui';
+import { Button, H2, H4, Paragraph, Separator, useTheme, XGroup, XStack, YStack } from 'tamagui';
 
 const styles = StyleSheet.create({
     imageContainer: {
@@ -29,11 +29,26 @@ const CircularImage = ({ imageUrl }) => {
     )
 }
 
+const DiscoveriesView = ({ }) => {
+    return (
+        <View flex={1} alignItems="left" justify="center" bg="$background">
+            <H4>Discoveries</H4>
+            <XStack>
+
+            </XStack>
+        </View>
+
+    )
+}
+
 const ConstellationView = ({ }) => {
     return (
-        <YStack flex={1} items="center" gap="$8" px="$10" pt="$5" bg="$background">
+        <View flex={1} alignItems="left" justify="center" bg="$background">
+            <H4>Constellations</H4>
+            <XStack>
 
-        </YStack>
+            </XStack>
+        </View>
 
     )
 }
@@ -46,7 +61,10 @@ export default function UserScreen() {
         <YStack flex={1} items="center" gap="$8" px="$10" pt="$5" bg="$background">
             <H2>Tamagui + Expo</H2>
 
-            <CircularImage imageUrl=imageURL />
+            <CircularImage imageUrl="sdf" />
+            <Button>
+                Add friend
+            </Button>
             <XStack
                 items="center"
                 justify="center"

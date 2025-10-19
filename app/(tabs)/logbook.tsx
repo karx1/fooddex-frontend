@@ -54,8 +54,8 @@ export default function LogbookScreen() {
   if (isLoading) {
     return (
       <View flex={1} alignItems="center" justify="center" bg="$background">
-        <ActivityIndicator size="large" />
         <Text mt="$2">Loading Logbook...</Text>
+        <ActivityIndicator size="large" />
       </View>
     )
   }

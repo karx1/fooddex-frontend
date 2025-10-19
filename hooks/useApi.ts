@@ -96,14 +96,11 @@ export interface FoodRecognitionRequest {
     image: string;
 }
 
-export interface FoodRecognitionData {
-    imageUrl: string;
-    detections: {
-        box_2d: number[];
-        label: string;
-        relabel: number;
-    }[];
-}
+export type FoodRecognitionData = {
+    box_2d: number[];
+    label: string;
+    relabel: number;
+}[];
 
 // ============================================================================
 // Configuration
