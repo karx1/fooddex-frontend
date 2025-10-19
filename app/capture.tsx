@@ -99,6 +99,7 @@ export default function App() {
 
             {pois?.result.map((poi, index) => {
                 if (!poi) return null;
+                // if (poi.relabel == 1) return null;
                 console.log("SHIT")
 
                 const tx = poi.box_2d[1] / 10;
@@ -108,14 +109,22 @@ export default function App() {
                 console.log({ tx, ty, bx, by });
 
                 return (
-                    <View key={index} style={{
+                    <TouchableOpacity key={index} style={{
                         position: 'absolute',
                         top: ty + "%",
                         left: tx + "%",
                         width: (bx - tx) + "%",
                         height: (by - ty) + "%",
                     }}
-                        onPress={() => console.log(poi.label)}
+                        onPress={() => {
+                            console.log(poi.label);
+                            router.push({
+                                pathname: '/foodcard',
+                                params: {
+                                    foodId: poi.label,
+                                }
+                            });
+                        }}
                     >
                         <Text
                             style={{
@@ -132,7 +141,7 @@ export default function App() {
                         >
                             {poi.label}
                         </Text>
-                    </View>
+                    </TouchableOpacity>
                 );
             })}
         </View>
