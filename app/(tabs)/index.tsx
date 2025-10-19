@@ -1,97 +1,85 @@
-import { ExternalLink, Heart, Settings } from '@tamagui/lucide-icons';
-import { useMemo } from 'react'
-import { ActivityIndicator, FlatList, Image } from 'react-native'
-import { ToastControl } from 'components/CurrentToast';
-import { Link } from 'expo-router';
-import { Pressable } from 'react-native';
-import { Anchor, H4, H6, Paragraph, XStack, YStack, View, Text, Separator, ListItem, useTheme} from 'tamagui';
+import { Heart } from '@tamagui/lucide-icons';
+import { useMemo } from 'react';
+import { ActivityIndicator, FlatList, Image, Pressable } from 'react-native';
+import { H4, H6, ListItem, Paragraph, Text, useTheme, View, XStack, YStack } from 'tamagui';
 // 1. We need to import all necessary data-fetching hooks
-import { useCaptures, useFavoritesByUser, useFood, useFoods, useUser, useUsers, CURRENT_USER_ID } from '../../hooks/useApi';
+import { CURRENT_USER_ID, useCaptures, useFavoritesByUser, useFoods, useUsers } from '../../hooks/useApi';
 
 // --- (NewCapturesSetup component is unchanged as it does not contain the error) ---
- 
-const NewCapturesSetup = ({isCapsLoading, is_error, llogbookEntries}) => {
+
+const NewCapturesSetup = ({ isCapsLoading, is_error, llogbookEntries }) => {
   // Removed unused theme variable
   // Display a loading indicator while data is being fetched
-    if (isCapsLoading) {
-      return (
-        <View flex={1} alignItems="center" justifyContent="center" bg="$background">
-          <Text mt="$2">Loading Logbook...</Text>
-          <ActivityIndicator size="large" />
-        </View>
-      )
-    }
-  
-    // Display an error message if any of the API calls fail
-    if (is_error) {
-      return (
-        <View flex={1} alignItems="center" justify="center" bg="$background">
-          <Text fontSize={20} color="$red10">
-            Error loading data
-          </Text>
-          <Text mt="$2" color="$color10">
-            {is_error.message}
-          </Text>
-        </View>
-      )
-    }
-  
-    // Display a message if the user has no captures
-    if (llogbookEntries.length == 0) {
-      return (
-      <YStack flex={1} items="flex-start" gap="$8" px="$10" pt="$5" bg="$background">
-        <H4>New Captures</H4>
+  if (isCapsLoading) {
+    return (
+      <View flex={1} alignItems="center" justifyContent="center" bg="$background">
+        <Text mt="$2">Loading Logbook...</Text>
+        <ActivityIndicator size="large" />
+      </View>
+    )
+  }
 
+  // Display an error message if any of the API calls fail
+  if (is_error) {
+    return (
+      <View flex={1} alignItems="center" justify="center" bg="$background">
+        <Text fontSize={20} color="$red10">
+          Error loading data
+        </Text>
+        <Text mt="$2" color="$color10">
+          {is_error.message}
+        </Text>
+      </View>
+    )
+  }
+
+  // Display a message if the user has no captures
+  if (llogbookEntries.length == 0) {
+    return (
+      <YStack items="flex-start" gap="$2" bg="$background">
+        <H4>New Captures</H4>
         <H6>No captures logged. Go capture!</H6>
-          
       </YStack>
-  )
-    }
+    )
+  }
   return (
-    <View>
-      <YStack flex={1} items="flex-start" gap="$8" px="$0" pt="$0" bg="$background">
-        <H4>New Captures</H4>
-          
-      </YStack>
-      <YStack flex={1} items="center" justify="center" bg="$background" pt="$2">
-
+    <YStack gap="$2" bg="$background">
+      <H4>New Captures</H4>
+      <View height={120}>
         <FlatList
-            data={llogbookEntries}
-            keyExtractor={(item) => item.id}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            snapToAlignment="center"
-            snapToInterval={200} // Adjust this value based on item width
-            decelerationRate="fast"
-            contentContainerStyle={{
-              paddingHorizontal: 16,
-              backgroundColor: '$background', // Set the background color here
-            }}
-            ItemSeparatorComponent={() => <Separator marginInline="$4" />}
-            renderItem={({ item }) => (
-              <Pressable>
-  <YStack
-    p="$3" // Padding inside the border
-    borderWidth={1}
-    borderColor="$gray6" // Example border color
-    borderRadius="$4" // Example border radius for rounded corners
-    // Add margin/spacing here if needed to separate it from other elements
-    // e.g., mb="$3"
-  >
-    {/* Moved the existing YStack content alignment here for simplicity */}
-    <YStack alignItems="center">
-      <ListItem
-        title={item.foodName}
-        subTitle={item.captureDate}
-        icon={item.isFavorite ? <Heart size={24} color="$red10" /> : undefined}
-      />
+          data={llogbookEntries}
+          keyExtractor={(item) => item.id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          snapToAlignment="center"
+          snapToInterval={200}
+          decelerationRate="fast"
+          contentContainerStyle={{
+            paddingHorizontal: 0,
+          }}
+          ItemSeparatorComponent={() => <View width="$3" />}
+          renderItem={({ item }) => (
+            <Pressable>
+              <YStack
+                p="$3"
+                borderWidth={1}
+                borderColor="$gray6"
+                borderRadius="$4"
+                width={180}
+              >
+                <YStack alignItems="center">
+                  <ListItem
+                    title={item.foodName}
+                    subTitle={item.captureDate}
+                    icon={item.isFavorite ? <Heart size={24} color="$red10" /> : undefined}
+                  />
+                </YStack>
+              </YStack>
+            </Pressable>
+          )}
+        />
+      </View>
     </YStack>
-  </YStack>
-</Pressable>
-            )}
-          />
-      </YStack>
-    </View>
   )
 }
 
@@ -106,7 +94,7 @@ const FeedSetup = () => {
   // Assuming you need all users and all foods to resolve names for the feed
   const { data: usersData, isLoading: isUsersLoading, error: usersError } = useUsers()
   const { data: foodsData, isLoading: isFoodsLoading, error: foodsError } = useFoods()
-  
+
   const isLoading = isCapturesLoading || isUsersLoading || isFoodsLoading;
   const error = capturesError || usersError || foodsError;
   // 3. Use useMemo to process the data efficiently after all data is loaded
@@ -158,25 +146,27 @@ const FeedSetup = () => {
     )
   }
 
-  
+
 
   return (
     <FlatList
       data={capturesWithUsernames}
       keyExtractor={(item) => item.id}
-      showsHorizontalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
+      style={{ width: '100%' }}
       renderItem={({ item }) => (
-        <YStack flex={1} items="flex-start" gap="$2" px="$0" pt="$5" bg="$background">
-          <XStack alignItems="center" gap="$3"> 
+        <YStack items="flex-start" gap="$2" px="$0" pt="$5" bg="$background">
+          <XStack alignItems="center" gap="$3">
             <Image
               source={{ uri: "https://pub-495a1a79b2634ef3ae2ea1e867730068.r2.dev/33dd913e-f522-4119-8665-69113412243f" }} // Yash Image
               style={{ width: 30, height: 30, borderRadius: 15 }} // Adjust size as needed
             />
             <Paragraph>{item.username} got a new catch!</Paragraph>
           </XStack>
-          
-          <Pressable >
+
+          <Pressable style={{ width: '100%' }}>
             <YStack
+              width="100%"
               p="$2"
               borderWidth={1}
               borderColor="$gray6"
@@ -186,7 +176,7 @@ const FeedSetup = () => {
                 {/* 1. Image YStack - This sets the overall height on the left side */}
                 <YStack>
                   <Image
-                    source={{ uri: item.image_url}}
+                    source={{ uri: item.image_url }}
                     style={{ width: 50, height: 50, borderRadius: 25 }}
                   />
                 </YStack>
@@ -252,15 +242,15 @@ export default function HomeScreen() {
     return processed.sort((a, b) => new Date(b.captureDate).getTime() - new Date(a.captureDate).getTime())
   }, [capturesData, foodsData, favoritesData])
   return (
-    
+
     <YStack flex={1} items="flex-start" gap="$2" px="$5" pt="$5" bg="$background">
-      <NewCapturesSetup 
-      isCapsLoading={isLoading} 
-      isError={error} 
-      llogbookEntries={logbookEntries} 
+      <NewCapturesSetup
+        isCapsLoading={isLoading}
+        is_error={error}
+        llogbookEntries={logbookEntries}
       />
       <H4>Feed</H4>
       <FeedSetup />
     </YStack>
-)
+  )
 }

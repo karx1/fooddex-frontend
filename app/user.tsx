@@ -1,11 +1,10 @@
 import { Star, X } from '@tamagui/lucide-icons';
-import { useState } from 'react'
-import { ActivityIndicator, Image, SafeAreaView, StyleSheet, View } from 'react-native';
-import { Button, H6, H3,H4, Paragraph, Separator, useTheme, XGroup, XStack, YStack, Avatar } from 'tamagui';
-import { useUser, CURRENT_USER_ID, useConstellations } from 'hooks/useApi';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import type { Constellation } from 'hooks/useApi';
+import { CURRENT_USER_ID, useConstellations, useUser } from 'hooks/useApi';
+import { useState } from 'react';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { Avatar, Button, H3, H4, Paragraph, useTheme, XGroup, XStack, YStack } from 'tamagui';
 
 const styles = StyleSheet.create({
     imageContainer: {
@@ -31,8 +30,8 @@ const CircularImage = ({ imageUrl, size = 150 }) => {
             borderRadius: size / 2, // Half the size makes it a perfect circle
             overflow: 'hidden',     // Crucial: Clips the content (Image) to the border radius
             // Optional: border for visibility/effect
-            borderWidth: 1, 
-            borderColor: '#ddd', 
+            borderWidth: 1,
+            borderColor: '#ddd',
         },
         image: {
             width: '100%', // Take up the full width of the container
@@ -48,7 +47,7 @@ const CircularImage = ({ imageUrl, size = 150 }) => {
     )
 }
 
-function DiscoveriesView (){
+function DiscoveriesView() {
     return (
         <View flex={1} alignItems="left" justify="center" bg="$background">
             <H4>Discoveries</H4>
@@ -60,7 +59,7 @@ function DiscoveriesView (){
     )
 }
 
-function ConstellationView (props){
+function ConstellationView(props) {
     const constellations: Constellation[] = props.constellations
     return (
         <View flex={1} alignItems="left" justify="center" bg="$background">
@@ -85,11 +84,11 @@ export default function UserScreen() {
     const addFriendClick = () => {
 
     }
-    const {data: constellationData, isLoading } = useConstellations();
+    const { data: constellationData, isLoading } = useConstellations();
     const goToUserIndex = () => {
         // You should use router.back() to logically "return"
         // If you specifically want to go to /home, use router.replace('/(tabs)/home')
-        router.back(); 
+        router.back();
     }
     // State to track the currently selected view
     const [selectedView, setSelectedView] = useState<"constellations" | "discoveries">("constellations");
@@ -108,17 +107,17 @@ export default function UserScreen() {
             />
             <Avatar circular size="$10">
                 <Avatar.Image src="https://pub-495a1a79b2634ef3ae2ea1e867730068.r2.dev/33dd913e-f522-4119-8665-69113412243f" />
-                
+
             </Avatar>
-            <YStack 
+            <YStack
                 items="center"
                 justify="center"
                 flexWrap="wrap"
                 gap="$1"
                 b="$3"
-            >   
+            >
                 <H3> {name} </H3>
-                <Paragraph textAlign="center"> {id} </Paragraph>
+                {/* <Paragraph textAlign="center"> {id} </Paragraph> */}
                 <XStack
                     items="center"
                     justify="center"
