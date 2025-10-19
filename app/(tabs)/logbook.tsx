@@ -159,6 +159,17 @@ export default function LogbookScreen() {
               <Paragraph theme="alt2">{item.captureDate}</Paragraph>
             </Card.Header>
             <Card.Footer padded>
+                {item.isFavorite && (
+                <View
+                  backgroundColor="$background"
+                  padding="$3"
+                  borderRadius="$10"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <Heart size={18} color="$color10" />
+                </View>
+              )}
               <XStack flex={1} />
               <Button borderRadius="$10" onPress={() => router.push({
                                 pathname: '/foodcard',

@@ -1,8 +1,8 @@
 import { Button, Card, H2, H3, Input, Paragraph, Stack, Text, XStack, YStack, Avatar, View, Image } from 'tamagui'
-import { X, Menu, Camera, Plus, Trash } from '@tamagui/lucide-icons'
+import { X, Menu, Camera, Plus, Trash, Heart, HeartPlus } from '@tamagui/lucide-icons'
 import { Route, router, useLocalSearchParams } from 'expo-router'
 import { ActivityIndicator, TouchableOpacity } from 'react-native'
-import { BUCKET_PREFIX, CaptureCreate, CURRENT_USER_ID, useCreateCapture, useDeleteCapture, useFoodByName, useFoodTotalCaptures } from 'hooks/useApi';
+import { BUCKET_PREFIX, CaptureCreate, CURRENT_USER_ID, useCreateCapture, useCreateFavorite, useDeleteCapture, useDeleteFavorite, useFavoritesByUser, useFoodByName, useFoodTotalCaptures } from 'hooks/useApi';
 import { useEffect, useMemo, useState } from 'react';
 
 type FoodPicScreenParams = {
@@ -17,6 +17,7 @@ export default function FoodPicScreen() {
   const {data: foodData, isLoading, error} = useFoodByName(foodname as string);
   console.log('hi' + image_id)
   const [uploadLoading, setUploadLoading] = useState(false);
+  const {data: favoritesData, isLoading: isFavoritesLoading, error: favoritesError, refetch} = useFavoritesByUser(CURRENT_USER_ID); 
 
   const food = useMemo(() => {
     if (!isLoading) {
@@ -42,6 +43,18 @@ export default function FoodPicScreen() {
       return null;
     }
   }, [isCapturesLoading, capturesData]);
+
+  const favorite = useMemo(() => {
+    if (isLoading || isFavoritesLoading) return false;
+
+    for (const fav of favoritesData?.result.favorites || []) {
+      if (fav.food === food?.id) {
+        return true;
+      }
+    }
+
+    return false;
+  }, [favoritesData, food, isLoading, isFavoritesLoading]);
 
   const imageUrl = `${BUCKET_PREFIX}/${image_id}`;
 
@@ -85,8 +98,46 @@ export default function FoodPicScreen() {
     captureDeleteMutator.mutate(capture_id!); // we can use ! here because we know it's defined if we're deleting
   };
 
+  const favoriteCreateMutator = useCreateFavorite({
+    onSuccess: () => {
+      console.log('Favorite created successfully!');
+      refetch(); // refetch favorites after creating a new one
+    },
+    onError: (error) => {
+      console.error('Failed to create favorite:', error.message);
+    },
+  });
 
-  if (isLoading || isCapturesLoading) {
+  const handleFavorite = () => {
+    const favoriteData = {
+      user: CURRENT_USER_ID,
+      food: food?.id!,
+    };
+
+    favoriteCreateMutator.mutate(favoriteData);
+  };
+
+  const favoriteDeleteMutator = useDeleteFavorite({
+    onSuccess: () => {
+      console.log('Favorite deleted successfully!');
+      refetch(); // refetch favorites after deleting one
+    },
+    onError: (error) => {
+      console.error('Failed to delete favorite:', error.message);
+    },
+  });
+
+  const handleDeleteFavorite = () => {
+    const deleteData: { userId: string; foodId: string } = {
+      userId: CURRENT_USER_ID,
+      foodId: food?.id!,
+    };
+
+    favoriteDeleteMutator.mutate(deleteData);
+  }
+
+
+  if (isLoading || isCapturesLoading || isFavoritesLoading) {
     return (
       <YStack flex={1} ai="center" jc="center" bg="$background">
           <Text mt="$2">Loading Logbook...</Text>
@@ -95,7 +146,7 @@ export default function FoodPicScreen() {
     )
   }
 
-  if (error || capturesError) {
+  if (error || capturesError || favoritesError) {
     return (
       <YStack flex={1} alignItems="center" justify="center" bg="$background">
         <Text fontSize={20} color="$red10">
@@ -177,9 +228,21 @@ export default function FoodPicScreen() {
             <Button icon={Plus} mt="$3" onPress={() => createCapture()} disabled={uploadLoading}>
               {uploadLoading ? 'Adding...' : 'Add'}
             </Button> :
-            <Button icon={Trash} mt="$3" onPress={() => deleteCapture()} disabled={uploadLoading}>
-              {uploadLoading ? 'Removing...' : 'Remove'}
-            </Button>
+            <>
+              {/* Only show favorite logic if this capture is already in the DB! */}
+              <Button icon={() => favorite ? <Heart /> : <HeartPlus />} mt="$3" onPress={() => {
+                if (!favorite) {
+                  handleFavorite();
+                } else {
+                  handleDeleteFavorite();
+                }
+              }}>
+                {favorite ? 'Favorited' : 'Not Favorited'}
+              </Button>
+              <Button icon={Trash} mt="$3" onPress={() => deleteCapture()} disabled={uploadLoading}>
+                {uploadLoading ? 'Removing...' : 'Remove'}
+              </Button>
+            </>
           }
         </YStack>
       </Card>
