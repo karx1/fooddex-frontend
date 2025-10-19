@@ -37,7 +37,7 @@ const NewCapturesSetup = ({isCapsLoading, is_error, llogbookEntries}) => {
     }
   
     // Display a message if the user has no captures
-    if (llogbookEntries.length == 0 && false) {
+    if (llogbookEntries.length == 0) {
       return (
       <YStack flex={1} items="flex-start" gap="$8" px="$10" pt="$5" bg="$background">
         <H4>New Captures</H4>
@@ -53,7 +53,7 @@ const NewCapturesSetup = ({isCapsLoading, is_error, llogbookEntries}) => {
         <H4>New Captures</H4>
           
       </YStack>
-      <YStack flex={1} items="center" justify="center" bg="$background">
+      <YStack flex={1} items="center" justify="center" bg="$background" pt="$2">
 
         <FlatList
             data={llogbookEntries}
@@ -97,7 +97,7 @@ const NewCapturesSetup = ({isCapsLoading, is_error, llogbookEntries}) => {
 
 
 
-// --- FeedSetup component with refactored data fetching ---
+// ... (rest of your imports and FeedSetup component start)
 
 const FeedSetup = () => {
   const theme = useTheme()
@@ -109,6 +109,23 @@ const FeedSetup = () => {
   
   const isLoading = isCapturesLoading || isUsersLoading || isFoodsLoading;
   const error = capturesError || usersError || foodsError;
+  // 3. Use useMemo to process the data efficiently after all data is loaded
+  const capturesWithUsernames = useMemo(() => {
+    if (!capturesData?.result.captures || !usersData?.result.users || !foodsData?.result.foods) {
+      return [];
+    }
+
+    // Create efficient lookup maps
+    const userMap = new Map(usersData.result.users.map((user) => [user.id, user.username]));
+    const foodMap = new Map(foodsData.result.foods.map((food) => [food.id, food.foodname]));
+
+    return capturesData.result.captures.map((capture) => ({
+      ...capture,
+      // Resolve names using the maps
+      username: userMap.get(capture.user) || 'Unknown User',
+      foodname: foodMap.get(capture.food) || 'Unknown Food',
+    }));
+  }, [capturesData, usersData, foodsData]); // Depend on all data sources
 
   if (isLoading) {
     return (
@@ -141,34 +158,26 @@ const FeedSetup = () => {
     )
   }
 
-  // 3. Use useMemo to process the data efficiently after all data is loaded
-  const capturesWithUsernames = useMemo(() => {
-    if (!capturesData?.result.captures || !usersData?.result.users || !foodsData?.result.foods) {
-      return [];
-    }
-
-    // Create efficient lookup maps
-    const userMap = new Map(usersData.result.users.map((user) => [user.id, user.username]));
-    const foodMap = new Map(foodsData.result.foods.map((food) => [food.id, food.foodname]));
-
-    return capturesData.result.captures.map((capture) => ({
-      ...capture,
-      // Resolve names using the maps
-      username: userMap.get(capture.user) || 'Unknown User',
-      foodname: foodMap.get(capture.food) || 'Unknown Food',
-    }));
-  }, [capturesData, usersData, foodsData]); // Depend on all data sources
+  
 
   return (
     <FlatList
       data={capturesWithUsernames}
       keyExtractor={(item) => item.id}
+      showsHorizontalScrollIndicator={false}
       renderItem={({ item }) => (
-        <YStack flex={1} items="flex-start" gap="$0" px="$10" pt="$5" bg="$background">
-          <Paragraph>{item.username} got a new catch!</Paragraph>
-          <Pressable>
+        <YStack flex={1} items="flex-start" gap="$2" px="$0" pt="$5" bg="$background">
+          <XStack alignItems="center" gap="$3"> 
+            <Image
+              source={{ uri: "https://pub-495a1a79b2634ef3ae2ea1e867730068.r2.dev/33dd913e-f522-4119-8665-69113412243f" }} // Yash Image
+              style={{ width: 30, height: 30, borderRadius: 15 }} // Adjust size as needed
+            />
+            <Paragraph>{item.username} got a new catch!</Paragraph>
+          </XStack>
+          
+          <Pressable >
             <YStack
-              p="$3"
+              p="$2"
               borderWidth={1}
               borderColor="$gray6"
               borderRadius="$4"
@@ -177,7 +186,7 @@ const FeedSetup = () => {
                 {/* 1. Image YStack - This sets the overall height on the left side */}
                 <YStack>
                   <Image
-                    source={{ uri: 'https://via.placeholder.com/50' }}
+                    source={{ uri: item.image_url}}
                     style={{ width: 50, height: 50, borderRadius: 25 }}
                   />
                 </YStack>
@@ -201,8 +210,6 @@ const FeedSetup = () => {
     />
   );
 }
-
-// --- (HomeScreen component is unchanged) ---
 
 export default function HomeScreen() {
   // Fetch all the data required for the logbook from the API
@@ -246,7 +253,7 @@ export default function HomeScreen() {
   }, [capturesData, foodsData, favoritesData])
   return (
     
-    <YStack flex={1} items="flex-start" gap="$2" px="$10" pt="$5" bg="$background">
+    <YStack flex={1} items="flex-start" gap="$2" px="$5" pt="$5" bg="$background">
       <NewCapturesSetup 
       isCapsLoading={isLoading} 
       isError={error} 
