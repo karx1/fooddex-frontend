@@ -65,7 +65,7 @@ export default function UserScreen() {
     // State to track the currently selected view
     const [selectedView, setSelectedView] = useState<"constellations" | "discoveries">("constellations");
     return (
-        <YStack flex={1} items="center" gap="$8" px="$10" pt="$5" bg="$background">
+        <YStack flex={1} items="center" gap="$8" px="$10" pt="$8" bg="$background">
 
             <CircularImage imageUrl="sdf" />
 
