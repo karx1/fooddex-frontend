@@ -75,7 +75,7 @@ function RootLayoutNav() {
               () => {
                 return (
                   <Button onPress={() => {
-                    router.push('/profile' as Href) // cursed but it works
+                    router.navigate('/user' as Href) // cursed but it works
                   }} size="$2">
                     Profile
                   </Button>

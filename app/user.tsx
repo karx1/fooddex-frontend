@@ -34,7 +34,7 @@ const DiscoveriesView = ({ }) => {
         <View flex={1} alignItems="left" justify="center" bg="$background">
             <H4>Discoveries</H4>
             <XStack>
-
+            
             </XStack>
         </View>
 
@@ -57,33 +57,45 @@ export default function UserScreen() {
     const theme = useTheme()
     const points = 1000 //TODO: change later
     const imageURL = "";
+    const name = "User Name"
     const addFriendClick = () => {
 
     }
     return (
         <YStack flex={1} items="center" gap="$8" px="$10" pt="$5" bg="$background">
-            <H2>Tamagui + Expo</H2>
 
             <CircularImage imageUrl="sdf" />
-            <Button onPress={addFriendClick}>
-                Add friend
-            </Button>
-            <XStack
+
+            <YStack 
                 items="center"
                 justify="center"
                 flexWrap="wrap"
-                gap="$1.5"
-                position="absolute"
-                b="$8"
-            >
-                <Star />
-                <Paragraph
-                    fontSize="$5"
+                gap="$1"
+                b="$5"
+            >   
+                <H4> {name} </H4>
+                <XStack
+                    items="center"
+                    justify="center"
+                    flexWrap="wrap"
+                    gap="$1.5"
+                    b="$8"
+                    mt="$8" // Add margin-top to create spacing between name and XStack
                 >
-                    {points}
-                </Paragraph>
-
-            </XStack>
+                    <Star />
+                    <Paragraph
+                        fontSize="$5"
+                    >
+                        {points}
+                    </Paragraph>
+                </XStack>
+                <Button onPress={addFriendClick}>
+                    Add friend
+                </Button>
+            </YStack>
+            
+            
+            
             <Separator />
             <XGroup>
                 <XGroup.Item>
