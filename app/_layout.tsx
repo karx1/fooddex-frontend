@@ -5,9 +5,9 @@ import { useColorScheme } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
-import { SplashScreen, Stack } from 'expo-router'
+import { Href, SplashScreen, Stack, useRouter } from 'expo-router'
 import { Provider } from 'components/Provider'
-import { useTheme } from 'tamagui'
+import { Button, useTheme, YStack } from 'tamagui'
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -41,7 +41,7 @@ export default function RootLayout() {
 
   return (
     <Providers>
-      <RootLayoutNav />
+        <RootLayoutNav />
     </Providers>
   )
 }
@@ -52,7 +52,10 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme()
-  const theme = useTheme()
+  const router = useRouter();
+  const theme = useTheme();
+
+
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
@@ -60,11 +63,36 @@ function RootLayoutNav() {
         <Stack.Screen
           name="(tabs)"
           options={{
+            headerShown: true,
+            headerTitle: 'FoodDex',
+            headerTitleStyle: {
+              color: theme.color.val,
+            },
+            headerStyle: {
+              backgroundColor: theme.background.val,
+            },
+            headerRight:
+              () => {
+                return (
+                  <Button onPress={() => {
+                    router.push('/profile' as Href) // cursed but it works
+                  }} size="$2">
+                    Profile
+                  </Button>
+                )
+              }
+          }}
+        />
+        <Stack.Screen
+          name="profile"
+          options={{
             headerShown: false,
+            headerTitle: 'Profile',
           }}
         />
 
-        <Stack.Screen
+        {/* Change this for the camera modal later */}
+        {/* <Stack.Screen
           name="modal"
           options={{
             title: 'Tamagui + Expo',
@@ -76,7 +104,7 @@ function RootLayoutNav() {
               backgroundColor: theme.background.val,
             },
           }}
-        />
+        /> */}
       </Stack>
     </ThemeProvider>
   )

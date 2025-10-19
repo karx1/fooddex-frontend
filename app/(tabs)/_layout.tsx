@@ -1,6 +1,6 @@
 import { Link, Tabs } from 'expo-router'
 import { Button, useTheme } from 'tamagui'
-import { Atom, AudioWaveform } from '@tamagui/lucide-icons'
+import { Atom, AudioWaveform, Book, BookOpen, House, User } from '@tamagui/lucide-icons'
 
 export default function TabLayout() {
   const theme = useTheme()
@@ -8,7 +8,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: theme.accentColor.val,
+        tabBarActiveTintColor: theme.accent10.val,
         tabBarStyle: {
           backgroundColor: theme.background.val,
           borderTopColor: theme.borderColor.val,
@@ -23,22 +23,17 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <Atom color={color as any} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Button mr="$4" size="$2.5">
-                Hello!
-              </Button>
-            </Link>
-          ),
+          title: 'Home',
+          headerTitle: "",
+          tabBarIcon: ({ color }) => <House color={color as any} />,
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="captures"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <AudioWaveform color={color as any} />,
+          title: 'Captures',
+          headerTitle: "",
+          tabBarIcon: ({ color, focused }) => focused ? <BookOpen color={color as any} /> : <Book color={color as any} />, 
         }}
       />
     </Tabs>
