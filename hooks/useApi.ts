@@ -53,18 +53,21 @@ export interface Capture {
     food: string;
     date: string;
     user: string;
+    image_url: string;
 }
 
 export interface CaptureCreate {
     food: string;
     date: string;
     user: string;
+    image_url: string;
 }
 
 export interface CaptureUpdate {
     food?: string;
     date?: string;
     user?: string;
+    image_url?: string;
 }
 
 export interface Favorite {

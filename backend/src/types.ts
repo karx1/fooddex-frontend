@@ -31,6 +31,7 @@ export const Capture = z.object({
 	food: Str(),
 	date: DateTime(),
 	user: Str(),
+	image_url: Str(),
 });
 
 export const CaptureCreate = Capture.omit({ id: true });
@@ -86,6 +87,7 @@ export interface Database {
 		food: string;
 		date: string;
 		user: string;
+		image_url: string;
 	};
 	users: {
 		id: string;
