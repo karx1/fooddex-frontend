@@ -6,7 +6,7 @@ info:
 servers:
   - url: http://localhost:8787
     description: Local development server
-  - url: https://your-worker.workers.dev
+  - url: https://backend.brandonwees.workers.dev
     description: Production server
 
 tags:
