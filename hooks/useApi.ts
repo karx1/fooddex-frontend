@@ -2,6 +2,14 @@ import { useMutation, useQuery, useQueryClient, type UseMutationOptions, type Us
 import { Use } from 'react-native-svg';
 
 // ============================================================================
+// Global Variables
+// ============================================================================
+
+// In a real application, you would get the current user's ID from an
+// authentication context or state management solution.
+export const CURRENT_USER_ID = 'user_2a7x1y9w0z8v3q5p'
+
+// ============================================================================
 // Types
 // ============================================================================
 

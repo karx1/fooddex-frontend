@@ -2,11 +2,7 @@ import { Heart } from '@tamagui/lucide-icons'
 import { useMemo } from 'react'
 import { ActivityIndicator, FlatList } from 'react-native'
 import { H4, ListItem, Separator, Text, View, YStack } from 'tamagui'
-import { useCaptures, useFavoritesByUser, useFoods } from '../../hooks/useApi'
-
-// In a real application, you would get the current user's ID from an
-// authentication context or state management solution.
-const CURRENT_USER_ID = 'user_2a7x1y9w0z8v3q5p'
+import { useCaptures, useFavoritesByUser, useFoods, CURRENT_USER_ID } from '../../hooks/useApi'
 
 export default function LogbookScreen() {
   // Fetch all the data required for the logbook from the API

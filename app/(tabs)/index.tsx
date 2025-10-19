@@ -5,11 +5,7 @@ import { ToastControl } from 'components/CurrentToast';
 import { Link } from 'expo-router';
 import { Pressable } from 'react-native';
 import { Anchor, H4, H6, Paragraph, XStack, YStack, View, Text, Separator, ListItem, useTheme} from 'tamagui';
-import { useCaptures, useFavoritesByUser, useFoods } from '../../hooks/useApi';
-
-// In a real application, you would get the current user's ID from an
-// authentication context or state management solution.
-const CURRENT_USER_ID = 'user_2a7x1y9w0z8v3q5p'
+import { useCaptures, useFavoritesByUser, useFoods, CURRENT_USER_ID } from '../../hooks/useApi';
  
 const NewCapturesSetup = ({isCapsLoading, is_error, llogbookEntries}) => {
   const theme = useTheme()
