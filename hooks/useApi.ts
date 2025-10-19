@@ -7,7 +7,8 @@ import { Use } from 'react-native-svg';
 
 // In a real application, you would get the current user's ID from an
 // authentication context or state management solution.
-export const CURRENT_USER_ID = "f683b3b1-041c-4206-8e9a-6ca11a706f4b"
+export const CURRENT_USER_ID = 'f683b3b1-041c-4206-8e9a-6ca11a706f4b';
+export const BUCKET_PREFIX = 'https://pub-495a1a79b2634ef3ae2ea1e867730068.r2.dev';
 
 // ============================================================================
 // Types

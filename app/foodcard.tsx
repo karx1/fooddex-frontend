@@ -1,13 +1,13 @@
-import { Button, Card, H2, H3, Input, Paragraph, Stack, Text, XStack, YStack, Avatar } from 'tamagui'
+import { Button, Card, H2, H3, Input, Paragraph, Stack, Text, XStack, YStack, Avatar, View, Image } from 'tamagui'
 import { X, Menu, Camera, Plus } from '@tamagui/lucide-icons'
 import { router, useLocalSearchParams } from 'expo-router'
 import { ActivityIndicator, TouchableOpacity } from 'react-native'
-import { useFoodByName, useFoodTotalCaptures } from 'hooks/useApi';
+import { BUCKET_PREFIX, useFoodByName, useFoodTotalCaptures } from 'hooks/useApi';
 import { useEffect, useMemo } from 'react';
 
 export default function FoodPicScreen() {
   const params = useLocalSearchParams();
-  const { foodname } = params;
+  const { foodname, image_id } = params;
   const {data: foodData, isLoading, error} = useFoodByName(foodname as string);
 
   const food = useMemo(() => {
@@ -33,6 +33,8 @@ export default function FoodPicScreen() {
     }
   }, [isCapturesLoading, capturesData]);
 
+  const imageUrl = `${BUCKET_PREFIX}/${image_id}`;
+
   if (isLoading || isCapturesLoading) {
     return (
       <YStack flex={1} ai="center" jc="center" bg="$background">
@@ -57,15 +59,28 @@ export default function FoodPicScreen() {
 
   return (
     <YStack flex={1} bg="$background" p="$4" space="$4">
-      {/* Header */}
-      <XStack ai="center" jc="space-between">
-        <Menu size={24} />
-        <H2>Food Pic</H2>
-        <TouchableOpacity onPress={() => router.back()}
-            style={{ position: 'absolute', top: 10, right: 10, padding: 8, borderRadius: 8 }}>
-          <X color="white" size={32} />
+      {/* Image Display */}
+      <View alignItems="center">
+      {/* <View> */}
+        <Image
+          source={{ uri: imageUrl, width: 500, height: 400 }} // Dimensions can be adjusted
+          resizeMode="cover"
+        />
+        {/* Repositioned Close Button */}
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={{
+            position: 'absolute',
+            top: 60, // Adjust for status bar
+            right: 20,
+            padding: 8,
+            borderRadius: 99,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+          }}
+        >
+          <X color="white" size={28} />
         </TouchableOpacity>
-      </XStack>
+      </View>
 
       {/* Food Info Card */}
       <Card p="$4" bordered>
