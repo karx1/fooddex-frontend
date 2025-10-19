@@ -1,9 +1,9 @@
-import { Button, Card, H2, H3, Input, Paragraph, Stack, Text, XStack, YStack, Avatar, View, Image } from 'tamagui'
-import { X, Menu, Camera, Plus, Trash, Heart, HeartPlus } from '@tamagui/lucide-icons'
-import { Route, router, useLocalSearchParams } from 'expo-router'
-import { ActivityIndicator, TouchableOpacity } from 'react-native'
+import { Heart, HeartPlus, Plus, Trash, X } from '@tamagui/lucide-icons';
+import { router, useLocalSearchParams } from 'expo-router';
 import { BUCKET_PREFIX, CaptureCreate, CURRENT_USER_ID, useCreateCapture, useCreateFavorite, useDeleteCapture, useDeleteFavorite, useFavoritesByUser, useFoodByName, useFoodTotalCaptures } from 'hooks/useApi';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { ActivityIndicator, TouchableOpacity } from 'react-native';
+import { Button, Card, H3, Image, Paragraph, Text, View, XStack, YStack } from 'tamagui';
 
 type FoodPicScreenParams = {
   foodname: string;
@@ -14,10 +14,9 @@ type FoodPicScreenParams = {
 
 export default function FoodPicScreen() {
   const { foodname, image_id, show_add, capture_id } = useLocalSearchParams<FoodPicScreenParams>();
-  const {data: foodData, isLoading, error} = useFoodByName(foodname as string);
-  console.log('hi' + image_id)
+  const { data: foodData, isLoading, error } = useFoodByName(foodname as string);
   const [uploadLoading, setUploadLoading] = useState(false);
-  const {data: favoritesData, isLoading: isFavoritesLoading, error: favoritesError, refetch} = useFavoritesByUser(CURRENT_USER_ID); 
+  const { data: favoritesData, isLoading: isFavoritesLoading, error: favoritesError, refetch } = useFavoritesByUser(CURRENT_USER_ID);
 
   const food = useMemo(() => {
     if (!isLoading) {
@@ -140,8 +139,8 @@ export default function FoodPicScreen() {
   if (isLoading || isCapturesLoading || isFavoritesLoading) {
     return (
       <YStack flex={1} ai="center" jc="center" bg="$background">
-          <Text mt="$2">Loading Logbook...</Text>
-          <ActivityIndicator size="large" />
+        <Text mt="$2">Loading Logbook...</Text>
+        <ActivityIndicator size="large" />
       </YStack>
     )
   }
@@ -160,10 +159,10 @@ export default function FoodPicScreen() {
   }
 
   return (
-    <YStack flex={1} bg="$background" p="$4" space="$4">
+    <YStack flex={1} bg="$background" p="$4" pt="$0" space="$4">
       {/* Image Display */}
       <View alignItems="center">
-      {/* <View> */}
+        {/* <View> */}
         <Image
           source={{ uri: imageUrl, width: 500, height: 400 }} // Dimensions can be adjusted
           resizeMode="cover"
@@ -173,8 +172,8 @@ export default function FoodPicScreen() {
           onPress={() => router.back()}
           style={{
             position: 'absolute',
-            top: 60, // Adjust for status bar
-            right: 20,
+            top: 20, // Adjust for status bar
+            right: 8,
             padding: 8,
             borderRadius: 99,
             backgroundColor: 'rgba(0,0,0,0.5)',
