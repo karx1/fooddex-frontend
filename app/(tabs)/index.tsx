@@ -1,18 +1,18 @@
 import { ExternalLink, Heart, Settings } from '@tamagui/lucide-icons';
 import { useMemo } from 'react'
-import { ActivityIndicator, FlatList } from 'react-native'
+import { ActivityIndicator, FlatList, Image } from 'react-native'
 import { ToastControl } from 'components/CurrentToast';
 import { Link } from 'expo-router';
 import { Pressable } from 'react-native';
 import { Anchor, H4, H6, Paragraph, XStack, YStack, View, Text, Separator, ListItem, useTheme} from 'tamagui';
-import { useCaptures, useFavoritesByUser, useFoods, CURRENT_USER_ID } from '../../hooks/useApi';
+import { useCaptures, useFavoritesByUser, useFood, useFoods, useUser, CURRENT_USER_ID } from '../../hooks/useApi';
  
 const NewCapturesSetup = ({isCapsLoading, is_error, llogbookEntries}) => {
-  const theme = useTheme()
+  // Removed unused theme variable
   // Display a loading indicator while data is being fetched
     if (isCapsLoading) {
       return (
-        <View flex={1} alignItems="center" justify="center" bg="$background">
+        <View flex={1} alignItems="center" justifyContent="center" bg="$background">
           <Text mt="$2">Loading Logbook...</Text>
           <ActivityIndicator size="large" />
         </View>
@@ -82,6 +82,15 @@ const NewCapturesSetup = ({isCapsLoading, is_error, llogbookEntries}) => {
   )
 }
 
+function getUsername(name) {
+  const { data } = useUser(name);
+  return data?.result?.user?.username || 'Unknown User';
+}
+
+function getFoodname(name) {
+  const { data } = useFood(name);
+  return data?.result?.food.foodname || 'Unknown Food';
+}
 const FeedSetup = () => {
   const theme = useTheme()
   const { data: capturesData, isLoading: isCapturesLoading, error: capturesError } = useCaptures()
@@ -117,18 +126,42 @@ const FeedSetup = () => {
     )
   }
 
+
+  const capturesWithUsernames = useMemo(() => {
+    if (!capturesData?.result.captures) {
+      return [];
+    }
+
+    return capturesData.result.captures.map((capture) => ({
+      ...capture,
+      username: getUsername(capture.user),
+      foodname: getFoodname(capture.food)
+    }));
+  }, [capturesData]);
+
   return (
     <FlatList
-      data={capturesData.result.captures}
+      data={capturesWithUsernames}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
-        <ListItem
-          title={item.food}
-          subTitle={new Date(item.date).toLocaleDateString()}
-        />
+        <YStack flex={1} items="flex-start" gap="$0" px="$10" pt="$5" bg="$background">
+          <Paragraph>{item.username} got a new catch!</Paragraph>
+          <XStack alignItems="center" gap="$4">
+            <YStack>
+              <Image
+                source={{ uri: 'https://via.placeholder.com/50' }}
+                style={{ width: 50, height: 50, borderRadius: 25 }}
+              />
+            </YStack>
+            <YStack>
+              <Text>{item.foodname}</Text>
+              <Text>{new Date(item.date).toLocaleDateString()}</Text>
+            </YStack>
+          </XStack>
+        </YStack>
       )}
     />
-  )
+  );
 }
 
 export default function HomeScreen() {
@@ -173,13 +206,13 @@ export default function HomeScreen() {
   }, [capturesData, foodsData, favoritesData])
   return (
     
-    <YStack flex={1} items="flex-start" gap="$8" px="$10" pt="$5" bg="$background">
+    <YStack flex={1} items="flex-start" gap="$2" px="$10" pt="$5" bg="$background">
       <NewCapturesSetup 
       isCapsLoading={isLoading} 
       isError={error} 
       llogbookEntries={logbookEntries} 
       />
-
+      <H4>Feed</H4>
       <FeedSetup />
     </YStack>
 )
