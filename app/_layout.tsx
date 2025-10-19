@@ -6,8 +6,9 @@ import { useFonts } from 'expo-font'
 import { Href, SplashScreen, Stack, useRouter } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
-import { useColorScheme } from 'react-native'
+import { Pressable, TouchableOpacity, useColorScheme } from 'react-native'
 import { Button, useTheme } from 'tamagui'
+import { User } from '@tamagui/lucide-icons'
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -74,11 +75,13 @@ function RootLayoutNav() {
             headerRight:
               () => {
                 return (
-                  <Button onPress={() => {
-                    router.navigate('/user' as Href) // cursed but it works
-                  }} size="$2">
-                    Profile
-                  </Button>
+                    <Button 
+                      onPress={() => {
+                        router.navigate('/user' as Href) // cursed but it works
+                      }}
+                    icon={User}
+                    >
+                    </Button>
                 )
               }
           }}

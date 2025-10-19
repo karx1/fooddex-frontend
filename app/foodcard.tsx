@@ -9,11 +9,13 @@ type FoodPicScreenParams = {
   foodname: string;
   image_id: string;
   show_add?: string;
+  capture_id?: string;
 }
 
 export default function FoodPicScreen() {
-  const { foodname, image_id, show_add } = useLocalSearchParams<FoodPicScreenParams>();
+  const { foodname, image_id, show_add, capture_id } = useLocalSearchParams<FoodPicScreenParams>();
   const {data: foodData, isLoading, error} = useFoodByName(foodname as string);
+  console.log('hi' + image_id)
   const [uploadLoading, setUploadLoading] = useState(false);
 
   const food = useMemo(() => {
@@ -80,7 +82,7 @@ export default function FoodPicScreen() {
 
   const deleteCapture = () => {
     setUploadLoading(true);
-    captureDeleteMutator.mutate(food?.id!);
+    captureDeleteMutator.mutate(capture_id!); // we can use ! here because we know it's defined if we're deleting
   };
 
 
