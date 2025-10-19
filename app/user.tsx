@@ -57,12 +57,15 @@ export default function UserScreen() {
     const theme = useTheme()
     const points = 1000 //TODO: change later
     const imageURL = "";
+    const addFriendClick = () => {
+
+    }
     return (
         <YStack flex={1} items="center" gap="$8" px="$10" pt="$5" bg="$background">
             <H2>Tamagui + Expo</H2>
 
             <CircularImage imageUrl="sdf" />
-            <Button>
+            <Button onPress={addFriendClick}>
                 Add friend
             </Button>
             <XStack
