@@ -93,14 +93,14 @@ export default function UserScreen() {
     // State to track the currently selected view
     const [selectedView, setSelectedView] = useState<"constellations" | "discoveries">("constellations");
     return (
-        <YStack flex={1} items="center" gap="$8" px="$10" pt="$8" bg="$background">
+        <YStack flex={1} items="center" gap="$8" px="$10" pt="$14" bg="$background">
             <Button
                 size="$3" // Small button size
                 chromeless // Remove background and border for a clean icon look
                 icon={<X size="$1" />} // Use the X icon
                 onPress={() => router.back()} // Use router.back() to go to the previous screen
                 position="absolute" // Position independently of the flow
-                top="$4" // Distance from the top
+                top="$8" // Distance from the top
                 right="$4" // Distance from the right
                 zIndex={10} // Ensure it's above other elements
                 circular // Make the button circular
