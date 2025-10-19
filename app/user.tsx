@@ -133,9 +133,9 @@ export default function UserScreen() {
                         {points}
                     </Paragraph>
                 </XStack>
-                <Button onPress={addFriendClick}>
+                {/* <Button onPress={addFriendClick}>
                     Add friend
-                </Button>
+                </Button> */}
             </YStack>
             <XGroup>
                 <XGroup.Item>
