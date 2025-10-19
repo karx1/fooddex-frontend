@@ -1,4 +1,5 @@
 import { Star } from '@tamagui/lucide-icons';
+import { useState } from 'react'
 import { Image, StyleSheet, View } from 'react-native';
 import { Button, H2, H4, Paragraph, Separator, useTheme, XGroup, XStack, YStack } from 'tamagui';
 
@@ -29,7 +30,7 @@ const CircularImage = ({ imageUrl }) => {
     )
 }
 
-const DiscoveriesView = ({ }) => {
+function DiscoveriesView (){
     return (
         <View flex={1} alignItems="left" justify="center" bg="$background">
             <H4>Discoveries</H4>
@@ -41,7 +42,7 @@ const DiscoveriesView = ({ }) => {
     )
 }
 
-const ConstellationView = ({ }) => {
+function ConstellationView (){
     return (
         <View flex={1} alignItems="left" justify="center" bg="$background">
             <H4>Constellations</H4>
@@ -60,6 +61,8 @@ export default function UserScreen() {
     const addFriendClick = () => {
 
     }
+    // State to track the currently selected view
+    const [selectedView, setSelectedView] = useState<"constellations" | "discoveries">("constellations");
     return (
         <YStack flex={1} items="center" gap="$8" px="$10" pt="$5" bg="$background">
             <H2>Tamagui + Expo</H2>
@@ -87,12 +90,18 @@ export default function UserScreen() {
             <Separator />
             <XGroup>
                 <XGroup.Item>
-                    <Button>Constellations</Button>
+                    <Button onPress={() => setSelectedView("constellations")}>Constellations</Button>
                 </XGroup.Item>
                 <XGroup.Item>
-                    <Button>Discoveries</Button>
+                    <Button onPress={() => setSelectedView("discoveries")}>Discoveries</Button>
                 </XGroup.Item>
             </XGroup>
+            {/* Conditionally render the selected view */}
+            {selectedView === "constellations" ? (
+                <ConstellationView />
+            ) : (
+                <DiscoveriesView />
+            )}
 
 
             {/* <XStack

@@ -1,21 +1,22 @@
 import requests
+import csv
 import time
+import base64
+import os
 
-with open("./foods.csv", "r") as fi:
-    next(fi)
-    for line in fi.readlines():
-        csvdata = line.split(",")
-        print(csvdata)
-        response = requests.post(
-            "https://backend.brandonwees.workers.dev/api/foods",
-            json={
-                "rarity": int(csvdata[2]),
-                "origin": csvdata[1],
-                "foodname": csvdata[0],
-                "description": csvdata[3]
-            }
-        )
-        print(response.json())
-        time.sleep(1)
 
-print(requests.get("https://backend.brandonwees.workers.dev/api/foods").json())
+
+image_path = "image.png"
+if os.path.exists(image_path):
+	with open(image_path, "rb") as img_file:
+		img_bytes = img_file.read()
+		img_b64 = base64.b64encode(img_bytes).decode("utf-8")
+	payload = {"image": img_b64}
+	response = requests.post(
+		"https://backend.brandonwees.workers.dev/api/recognizeFood",
+		json=payload
+	)
+	print("Status:", response.status_code)
+	print("Response:", response.json())
+else:
+	print(f"File {image_path} not found.")

@@ -35,7 +35,6 @@ export class RecognizeFoodEndpoint extends OpenAPIRoute {
     };
 
     async handle(c: AppContext) {
-        console
         const data = await this.getValidatedData<typeof this.schema>();
 
 
@@ -49,6 +48,8 @@ export class RecognizeFoodEndpoint extends OpenAPIRoute {
         result.forEach((item, i) => {
             foodSt += `${i}:${item.foodname},`
         })
+
+        console.log(foodSt)
 
         const prompt = `
             Return square bounding boxes around objects identified as 'food'
