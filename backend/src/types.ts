@@ -62,60 +62,6 @@ export const FoodRecognitionRequest = z.object({
 	mimetype: Str(),
 })
 
-/*
-[
-  {
-	"box_2d": [150, 539, 285, 775],
-	"label": "Pumpkin Pie",
-	"relabel": 1
-  },
-  {
-	"box_2d": [210, 207, 424, 545],
-	"label": "Dinner Rolls",
-	"relabel": 1
-  },
-  {
-	"box_2d": [356, 104, 542, 412],
-	"label": "Pumpkin Bread",
-	"relabel": 1
-  },
-  {
-	"box_2d": [448, 448, 599, 706],
-	"label": "Green Beans",
-	"relabel": 1
-  },
-  {
-	"box_2d": [396, 720, 533, 963],
-	"label": "Mashed Potatoes",
-	"relabel": 1
-  },
-  {
-	"box_2d": [538, 142, 714, 414],
-	"label": "Stuffing",
-	"relabel": 1
-  },
-  {
-	"box_2d": [656, 350, 935, 792],
-	"label": "Sliced Turkey",
-	"relabel": 1
-  },
-  {
-	"box_2d": [724, 33, 883, 271],
-	"label": "Corn",
-	"relabel": 1
-  },
-  {
-	"box_2d": [564, 836, 638, 970],
-	"label": "Gravy",
-	"relabel": 1
-  },
-  {
-	"box_2d": [672, 812, 742, 924],
-	"label": "Cranberry Sauce",
-	"relabel": 1
-  }
-]
-*/
 
 export const FoodRecognitionData = z.object({
 	imageUrl: Str(),

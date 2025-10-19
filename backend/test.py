@@ -9,9 +9,16 @@ json = {
     "mimetype": "image/jpeg"
 }
 
+# response = requests.post(
+#     "http://localhost:8787/api/recognizeFood",
+#     json=json
+# )
+
 response = requests.post(
-    "https://backend.brandonwees.workers.dev/api/recognizeFood",
-    json=json
+    "https://backend.brandonwees.workers.dev/api/foods",
+    json={
+        
+    }
 )
 
 print(response.text)

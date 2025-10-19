@@ -1,6 +1,6 @@
-import { Link, Tabs } from 'expo-router'
-import { Button, useTheme } from 'tamagui'
-import { Atom, AudioWaveform, Book, BookOpen, House, User } from '@tamagui/lucide-icons'
+import { Book, BookOpen, House } from '@tamagui/lucide-icons'
+import { Tabs } from 'expo-router'
+import { useTheme } from 'tamagui'
 
 export default function TabLayout() {
   const theme = useTheme()
@@ -28,12 +28,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <House color={color as any} />,
         }}
       />
+
       <Tabs.Screen
-        name="captures"
+        name="logbook"
         options={{
-          title: 'Captures',
+          title: 'Logbook',
           headerTitle: "",
-          tabBarIcon: ({ color, focused }) => focused ? <BookOpen color={color as any} /> : <Book color={color as any} />, 
+          tabBarIcon: ({ color, focused }) => focused ? <BookOpen color={color as any} /> : <Book color={color as any} />,
         }}
       />
     </Tabs>

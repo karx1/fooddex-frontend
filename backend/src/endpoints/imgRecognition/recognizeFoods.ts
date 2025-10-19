@@ -63,7 +63,7 @@ export class RecognizeFoodEndpoint extends OpenAPIRoute {
 
             Here is a list of food labels.:
             
-            ${result}
+            ${foodSt}
             
             The label for each box returned should be an identifying name for the food detected.
             Prioritize labels drawn from the list of food labels, but be at liberty
@@ -71,7 +71,8 @@ export class RecognizeFoodEndpoint extends OpenAPIRoute {
             should none in the list match. In the case of a new label, make the relabel value in the JSON
             1. Otherwise, set relabel to 0.
 
-            We also want to store which index in the list of food labels our label resides in.
+            We also want to store which index in the list of food labels our label resides in as rel_id, 0 indexed.
+            For example, if the first label in the list is the correct label, return 0 as rel_id.
 
             
             The format should be as follows: [{"box_2d": [ymin, xmin, ymax, xmax],
