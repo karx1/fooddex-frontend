@@ -1,14 +1,20 @@
-import { Button, Card, H2, H3, Input, Paragraph, Stack, Text, XStack, YStack, Avatar } from 'tamagui'
-import { X, Menu, Camera, Plus } from '@tamagui/lucide-icons'
-import { router, useLocalSearchParams } from 'expo-router'
+import { Button, Card, H2, H3, Input, Paragraph, Stack, Text, XStack, YStack, Avatar, View, Image } from 'tamagui'
+import { X, Menu, Camera, Plus, Trash } from '@tamagui/lucide-icons'
+import { Route, router, useLocalSearchParams } from 'expo-router'
 import { ActivityIndicator, TouchableOpacity } from 'react-native'
-import { useFoodByName, useFoodTotalCaptures } from 'hooks/useApi';
-import { useEffect, useMemo } from 'react';
+import { BUCKET_PREFIX, CaptureCreate, CURRENT_USER_ID, useCreateCapture, useDeleteCapture, useFoodByName, useFoodTotalCaptures } from 'hooks/useApi';
+import { useEffect, useMemo, useState } from 'react';
+
+type FoodPicScreenParams = {
+  foodname: string;
+  image_id: string;
+  show_add?: string;
+}
 
 export default function FoodPicScreen() {
-  const params = useLocalSearchParams();
-  const { foodname } = params;
+  const { foodname, image_id, show_add } = useLocalSearchParams<FoodPicScreenParams>();
   const {data: foodData, isLoading, error} = useFoodByName(foodname as string);
+  const [uploadLoading, setUploadLoading] = useState(false);
 
   const food = useMemo(() => {
     if (!isLoading) {
@@ -19,6 +25,8 @@ export default function FoodPicScreen() {
       return null;
     }
   }, [isLoading, foodData]);
+
+  const parsedShowAdd = useMemo(() => show_add && show_add === '1', [show_add]);
 
   const { data: capturesData, isLoading: isCapturesLoading, error: capturesError } = useFoodTotalCaptures(food?.id || '', {
     enabled: !!food,
@@ -32,6 +40,49 @@ export default function FoodPicScreen() {
       return null;
     }
   }, [isCapturesLoading, capturesData]);
+
+  const imageUrl = `${BUCKET_PREFIX}/${image_id}`;
+
+  const captureCreateMutator = useCreateCapture({
+    onSuccess: () => {
+      setUploadLoading(false);
+      console.log('Capture created successfully!');
+      router.back();
+    },
+    onError: (error) => {
+      console.error('Failed to create capture:', error.message);
+    },
+  })
+
+  const createCapture = () => {
+    setUploadLoading(true);
+    const capture: CaptureCreate = {
+      food: food?.id!,
+      date: new Date().toISOString(),
+      user: CURRENT_USER_ID, // hardcoding for now, very very very hacky
+      image_url: imageUrl,
+    };
+
+
+    captureCreateMutator.mutate(capture);
+  };
+
+  const captureDeleteMutator = useDeleteCapture({
+    onSuccess: () => {
+      setUploadLoading(false);
+      console.log('Capture deleted successfully!');
+      router.back();
+    },
+    onError: (error) => {
+      console.error('Failed to delete capture:', error.message);
+    },
+  });
+
+  const deleteCapture = () => {
+    setUploadLoading(true);
+    captureDeleteMutator.mutate(food?.id!);
+  };
+
 
   if (isLoading || isCapturesLoading) {
     return (
@@ -57,15 +108,28 @@ export default function FoodPicScreen() {
 
   return (
     <YStack flex={1} bg="$background" p="$4" space="$4">
-      {/* Header */}
-      <XStack ai="center" jc="space-between">
-        <Menu size={24} />
-        <H2>Food Pic</H2>
-        <TouchableOpacity onPress={() => router.back()}
-            style={{ position: 'absolute', top: 10, right: 10, padding: 8, borderRadius: 8 }}>
-          <X color="white" size={32} />
+      {/* Image Display */}
+      <View alignItems="center">
+      {/* <View> */}
+        <Image
+          source={{ uri: imageUrl, width: 500, height: 400 }} // Dimensions can be adjusted
+          resizeMode="cover"
+        />
+        {/* Repositioned Close Button */}
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={{
+            position: 'absolute',
+            top: 60, // Adjust for status bar
+            right: 20,
+            padding: 8,
+            borderRadius: 99,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+          }}
+        >
+          <X color="white" size={28} />
         </TouchableOpacity>
-      </XStack>
+      </View>
 
       {/* Food Info Card */}
       <Card p="$4" bordered>
@@ -107,9 +171,14 @@ export default function FoodPicScreen() {
             </XStack>
           </YStack> */}
 
-          <Button icon={Plus} mt="$3">
-            Add
-          </Button>
+          {parsedShowAdd ?
+            <Button icon={Plus} mt="$3" onPress={() => createCapture()} disabled={uploadLoading}>
+              {uploadLoading ? 'Adding...' : 'Add'}
+            </Button> :
+            <Button icon={Trash} mt="$3" onPress={() => deleteCapture()} disabled={uploadLoading}>
+              {uploadLoading ? 'Removing...' : 'Remove'}
+            </Button>
+          }
         </YStack>
       </Card>
 
